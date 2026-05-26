@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExaAuto | Consulenza Completa Auto Elettriche</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0A0A0A;
+      --text: #FFFFFF;
+      --text-muted: #AAAAAA;
+      --accent: #00E676;
+      --accent-hover: #00C966;
+      --card-bg: #111111;
+      --border: #222222;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 80px 0; }
+    h1, h2, h3 { font-weight: 700; line-height: 1.2; margin-bottom: 16px; }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); }
+    h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); text-align: center; margin-bottom: 40px; }
+    p { color: var(--text-muted); margin-bottom: 24px; }
+    .text-center { text-align: center; }
+    
+    .btn {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg);
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 100%;
+      text-align: center;
+    }
+    .btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    .btn-outline:hover { background: rgba(0,230,118,0.1); }
+
+    header { padding: 20px 0; border-bottom: 1px solid var(--border); position: relative; z-index: 10; background: var(--bg); }
+    .nav { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.5rem; font-weight: 700; color: var(--text); text-decoration: none; }
+    .logo span { color: var(--accent); }
+
+    .hero { text-align: center; padding: 100px 0 80px; }
+    .hero h1 { margin-bottom: 20px; }
+    .hero .sub { font-size: 1.15rem; max-width: 600px; margin: 0 auto 32px; }
+
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; text-align: center; }
+    .step-icon { width: 40px; height: 40px; margin-bottom: 16px; fill: var(--accent); }
+    .step h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--text); }
+    .step p { font-size: 0.95rem; margin-bottom: 0; }
+
+    .pricing-grid { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 24px; 
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .pricing-grid .card:nth-child(4) { grid-column: 2; }
+    
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px 24px;
+      transition: border-color 0.3s, transform 0.2s;
+      display: flex; flex-direction: column;
+      position: relative;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .card.featured { border-color: var(--accent); }
+    .card.featured::before {
+      content: "Best Seller"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: var(--bg); padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+      white-space: nowrap;
+    }
+    .card h3 { font-size: 1.2rem; margin-bottom: 8px; color: var(--text); }
+    .price { font-size: 2.5rem; font-weight: 700; margin: 8px 0 16px; color: var(--accent); display: flex; align-items: baseline; justify-content: center; }
+    .price-prefix { font-size: 1.1rem; font-weight: 400; opacity: 0.8; margin-right: 4px; }
+    .card .desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; min-height: 40px; }
+    .card ul { list-style: none; margin-bottom: 16px; flex-grow: 1; }
+    .card li { margin-bottom: 10px; padding-left: 20px; position: relative; font-size: 0.95rem; color: #CCC; }
+    .card li::before { content: "✓"; color: var(--accent); position: absolute; left: 0; font-weight: bold; }
+    .card .btn { margin-top: auto; }
+    .price-note { font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 12px; font-style: italic; line-height: 1.4; }
+
+    .contact { text-align: center; background: var(--card-bg); border-radius: 16px; margin: 0 24px 80px; padding: 60px 24px; border: 1px solid var(--border); }
+    .contact h2 { margin-bottom: 16px; }
+    .whatsapp-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 24px; width: auto; }
+
+    footer { text-align: center; padding: 40px 0; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; }
+    footer a { color: var(--text-muted); text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: var(--accent); }
+    
+    .socials {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 24px;
+      margin-bottom: 24px;
+    }
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+    .social-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+      transition: fill 0.3s ease;
+    }
+    .social-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0A0A0A;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 230, 118, 0.2);
+    }
+
+    @media (max-width: 900px) {
+      .pricing-grid { grid-template-columns: 1fr; }
+      .pricing-grid .card:nth-child(4) { grid-column: auto; }
+    }
+    @media (max-width: 768px) {
+      section { padding: 60px 0; }
+      .hero { padding: 60px 0; }
+      .steps-grid { grid-template-columns: 1fr; gap: 24px; }
+      .contact { margin: 0 0 60px; border-radius: 0; border-left: none; border-right: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav">
+      <a href="#" class="logo">Exa<span>Auto</span></a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Auto elettrica?<br>Non pagare 13.000€ in più.</h1>
+        <p class="sub">Consulenza a 360° per la transizione all'elettrico: incentivi, ricarica, acquisto sicuro e ottimizzazione fiscale. Supporto 100% online.</p>
+        <a href="#pricing" class="btn" style="width: auto; padding: 14px 32px;">Vedi i Pacchetti</a>
+      </div>
+    </section>
+
+    <section id="steps">
+      <div class="container">
+        <div class="steps-grid">
+          <div class="step">
+            <svg class="step-icon" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+            <h3>Contattaci</h3>
+            <p>Scrivici su WhatsApp o email per un primo confronto</p>
+          </div>
+          <div class="step">
+            <svg class="step-icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM6 20V4h5v7h7v9H6z"/></svg>
+            <h3>Compila</h3>
+            <p>Il modulo veloce con i tuoi dati, modello auto e esigenze di ricarica</p>
+          </div>
+          <div class="step">
+            <svg class="step-icon" viewBox="0 0 24 24"><path d="M12 2L2 12l3 3 7-7 7 7 3-3L12 2zM2 20h20v2H2z"/></svg>
+            <h3>Ricevi</h3>
+            <p>Il rapporto personalizzato con incentivi, documenti e piano operativo completo</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <div class="container">
+        <h2>Scegli il supporto giusto</h2>
+        <div class="pricing-grid">
+          
+          <div class="card">
+            <h3>Entry Level</h3>
+            <div class="price">€29</div>
+            <p class="desc">Per verificare incentivi, compatibilità ricarica e requisiti base</p>
+            <ul>
+              <li>Verifica requisiti personalizzata</li>
+              <li>Lista documenti necessari</li>
+              <li>Stima incentivo ottenibile</li>
+              <li>Report PDF personalizzato</li>
+            </ul>
+            <a href="https://wa.me/393519878195?text=Ciao%20ExaAuto,%20vorrei%20info%20sul%20pacchetto%20Entry%20Level%20(29€)" class="btn btn-outline" target="_blank">Scegli Entry</a>
+          </div>
+
+          <div class="card featured">
+            <h3>Best Seller</h3>
+            <div class="price">€79</div>
+            <p class="desc">Supporto completo: incentivi, guida ricarica, template concessionaria e consulenza acquisto</p>
+            <ul>
+              <li>Tutto incluso nell'Entry Level</li>
+              <li>Call/WhatsApp di 15 min</li>
+              <li>Analisi documentazione completa</li>
+              <li>Template email per concessionaria</li>
+              <li>Supporto WhatsApp per 7 giorni</li>
+            </ul>
+            <a href="https://wa.me/393519878195?text=Ciao%20ExaAuto,%20vorrei%20info%20sul%20pacchetto%20Best%20Seller%20(79€)" class="btn" target="_blank">Scegli Best Seller</a>
+          </div>
+
+          <div class="card">
+            <h3>Premium</h3>
+            <div class="price">€199</div>
+            <p class="desc">Delega totale: pratiche MIMIT, gestione ricarica domestica e supporto fiscale P.IVA</p>
+            <ul>
+              <li>Tutto incluso nel Best Seller</li>
+              <li>Guida pratica registrazione MIMIT</li>
+              <li>Compilazione pratica con screen sharing</li>
+              <li>Monitoraggio fino all'erogazione</li>
+              <li>Supporto prioritario illimitato</li>
+              <li>Garanzia rimborso 50% se non ottieni il bonus</li>
+            </ul>
+            <a href="https://wa.me/393519878195?text=Ciao%20ExaAuto,%20vorrei%20info%20sul%20pacchetto%20Premium%20(199€)" class="btn btn-outline" target="_blank">Scegli Premium</a>
+          </div>
+
+          <div class="card">
+            <h3>Business & Flotte</h3>
+            <div class="price"><span class="price-prefix">da </span>€499</div>
+            <p class="desc">Transizione flotta completa: analisi veicoli, infrastruttura ricarica e ottimizzazione fiscale</p>
+            <ul>
+              <li>Analisi fabbisogno flotta veicoli</li>
+              <li>Piano di rinnovo ottimizzato</li>
+              <li>Gestione pratiche multiple (fino a 5)</li>
+              <li>Report fiscale e detrazioni dedicate</li>
+              <li>Consulenza dedicata e supporto prioritario</li>
+              <li>Fatturazione elettronica e contratto B2B</li>
+            </ul>
+            <a href="https://wa.me/393519878195?text=Ciao%20ExaAuto,%20vorrei%20info%20sul%20pacchetto%20Business%20(499€)" class="btn btn-outline" target="_blank">Richiedi Preventivo</a>
+            <p class="price-note">* Il prezzo parte da €499. L'importo definitivo sarà concordato dopo l'analisi delle tue esigenze.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <h2>Hai dubbi prima di scegliere?</h2>
+      <p>Scrivici direttamente. Oltre agli incentivi, ti supportiamo nella scelta del veicolo, nell'installazione della colonnina e nell'ottimizzazione fiscale. Niente call forzate.</p>
+      <a href="https://wa.me/393519878195" class="btn whatsapp-btn" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Scrivici su WhatsApp
+      </a>
+      <p style="margin-top: 16px; font-size: 0.9rem; color: var(--text-muted);">Oppure via email: <a href="mailto:info@exaauto.it" style="color: var(--accent);">info@exaauto.it</a></p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 ExaAuto. Tutti i diritti riservati.</p>
+      
+      <div class="socials">
+        <a href="https://instagram.com/exaauto" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </a>
+        <a href="https://tiktok.com/@exaauto" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.77a4.85 4.85 0 01-1.01-.08z"/></svg>
+        </a>
+        <a href="https://youtube.com/@ExaAuto" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="YouTube">
+          <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+        <a href="https://wa.me/393519878195" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="WhatsApp">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+        </a>
+      </div>
+
+      <p style="margin-top: 12px; font-size: 0.8rem;">
+        <a href="privacy.html">Privacy Policy</a> | <a href="cookie.html">Cookie Settings</a> | <a href="termini.html">Termini</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
