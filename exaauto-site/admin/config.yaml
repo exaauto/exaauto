@@ -1,0 +1,35 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "auto"
+    label: "Auto in Vendita"
+    folder: "auto"
+    create: true
+    slug: "dettaglio-{{slug}}"
+    fields:
+      - {label: "Titolo", name: "title", widget: "string"}
+      - {label: "Prezzo", name: "price", widget: "string"}
+      - {label: "Anno", name: "year", widget: "number"}
+      - {label: "Km", name: "km", widget: "string"}
+      - {label: "Alimentazione", name: "fuel", widget: "string"}
+      - {label: "Cambio", name: "transmission", widget: "string"}
+      - {label: "Immagine", name: "image", widget: "image"}
+      - {label: "Descrizione Breve", name: "excerpt", widget: "text"}
+      - {label: "Contenuto", name: "body", widget: "markdown"}
+      - {label: "Stato", name: "status", widget: "select", options: ["Disponibile", "Prenotata", "Venduta"]}
+
+  - name: "novita"
+    label: "Novità & Blog"
+    folder: "novita"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Titolo", name: "title", widget: "string"}
+      - {label: "Categoria", name: "category", widget: "string"}
+      - {label: "Immagine", name: "image", widget: "image"}
+      - {label: "Contenuto", name: "body", widget: "markdown"}
