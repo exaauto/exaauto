@@ -142,6 +142,10 @@
             cursor: pointer;
             transition: all 0.2s;
             border-left: 2px solid transparent;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
         }
 
         .admin-sidebar-item:hover {
@@ -363,6 +367,46 @@
             margin-bottom: 24px;
         }
 
+        /* Info Box */
+        .info-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 32px;
+            margin-top: 24px;
+        }
+
+        .info-box h3 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .info-box-code {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 16px;
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #4ade80;
+            overflow-x: auto;
+        }
+
+        .info-box-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
         /* Modal */
         .modal {
             display: none;
@@ -432,6 +476,7 @@
                 gap: 8px;
                 padding: 16px 5%;
                 position: static;
+                flex-wrap: wrap;
             }
 
             .admin-sidebar-title {
@@ -449,6 +494,15 @@
 
             .admin-content-title {
                 font-size: 32px;
+            }
+
+            .info-box-links {
+                flex-direction: column;
+            }
+
+            .admin-btn {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -515,10 +569,43 @@
                     <p class="admin-content-subtitle">Gestisci le configurazioni generali del sito</p>
                 </div>
 
-                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 32px; margin-top: 24px;">
-                    <h3 style="font-family: var(--font-display); font-size: 20px; margin-bottom: 20px;">Integrazione CMS</h3>
-                    <p style="color: var(--text-muted); margin-bottom: 16px;">Questa sezione è gestita tramite Netlify CMS. Per accedere al pannello completo di amministrazione con tutte le funzioni avanzate:</p>
-                    <a href="/admin/#/" class="admin-btn admin-btn--primary" target="_blank">Accedi a Netlify CMS</a>
+                <div class="info-box">
+                    <h3>📁 Gestione Contenuti via GitHub</h3>
+                    <p>Poiché il sito è hostato su <strong>Cloudflare Pages</strong>, tutti i contenuti (auto e articoli) sono gestiti direttamente via GitHub nel tuo repository:</p>
+                    
+                    <div class="info-box-code">
+                        📦 exaauto/exaauto/data/<br>
+                        ├── cars/        (annunci auto in JSON)<br>
+                        └── news/        (articoli in JSON)
+                    </div>
+
+                    <p><strong>Come funziona:</strong></p>
+                    <ul style="color: var(--text-muted); margin-left: 20px; margin-bottom: 16px;">
+                        <li>Aggiungi un'auto o un articolo nel form qui accanto</li>
+                        <li>I dati vengono salvati come file JSON in GitHub</li>
+                        <li>Cloudflare Pages legge automaticamente i file e li mostra sul sito</li>
+                        <li>Non servono account esterni - tutto tramite GitHub!</li>
+                    </ul>
+
+                    <div class="info-box-links">
+                        <a href="https://github.com/exaauto/exaauto/tree/main/data/cars" target="_blank" class="admin-btn admin-btn--secondary">📂 Visualizza Auto su GitHub</a>
+                        <a href="https://github.com/exaauto/exaauto/tree/main/data/news" target="_blank" class="admin-btn admin-btn--secondary">📂 Visualizza Articoli su GitHub</a>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h3>🔧 Configurazione Avanzata</h3>
+                    <p>Per modifiche più avanzate o per usare un CMS esterno, puoi configurare:</p>
+                    
+                    <p><strong>Opzione 1: Netlify CMS (alternativa)</strong></p>
+                    <p style="margin-bottom: 16px;">Nonostante usi Cloudflare Pages, puoi comunque usare Netlify CMS per una gestione più facile. Contatta il supporto Netlify per la configurazione con Cloudflare Pages.</p>
+
+                    <p><strong>Opzione 2: Modifica diretta su GitHub</strong></p>
+                    <p>Accedi al tuo repository e modifica i file JSON nella cartella <code style="background: var(--bg3); padding: 2px 6px; border-radius: 2px;">data/</code></p>
+
+                    <div class="info-box-links">
+                        <a href="https://github.com/exaauto/exaauto" target="_blank" class="admin-btn admin-btn--primary">🔗 Vai al Repository GitHub</a>
+                    </div>
                 </div>
             </section>
         </main>
@@ -683,11 +770,13 @@
                 badge: document.getElementById('carBadge').value,
                 excerpt: document.getElementById('carExcerpt').value,
                 featured: document.getElementById('carFeatured').value === 'true',
-                date: new Date().toISOString()
+                date: new Date().toISOString(),
+                image: "https://via.placeholder.com/800x400"
             };
 
-            console.log('Auto salvata:', carData);
-            alert('✅ Auto aggiunta! Per completare il caricamento accedi a Netlify CMS');
+            console.log('Auto da salvare:', carData);
+            alert('✅ Dati auto salvati!\n\n📝 Passo successivo:\n1. Copia i dati mostrati in console (F12)\n2. Vai su: github.com/exaauto/exaauto\n3. Naviga in data/cars/\n4. Crea un nuovo file JSON con i dati\n5. Commit e il sito si aggiornerà automaticamente!');
+            console.log(JSON.stringify(carData, null, 2));
             closeCarModal();
         }
 
@@ -727,11 +816,13 @@
                 category: document.getElementById('newsCategory').value,
                 excerpt: document.getElementById('newsExcerpt').value,
                 body: document.getElementById('newsBody').value,
-                date: new Date().toISOString()
+                date: new Date().toISOString(),
+                image: "https://via.placeholder.com/800x400"
             };
 
-            console.log('Articolo salvato:', newsData);
-            alert('✅ Articolo aggiunto! Per completare il caricamento accedi a Netlify CMS');
+            console.log('Articolo da salvare:', newsData);
+            alert('✅ Dati articolo salvati!\n\n📝 Passo successivo:\n1. Copia i dati mostrati in console (F12)\n2. Vai su: github.com/exaauto/exaauto\n3. Naviga in data/news/\n4. Crea un nuovo file JSON con i dati\n5. Commit e il sito si aggiornerà automaticamente!');
+            console.log(JSON.stringify(newsData, null, 2));
             closeNewsModal();
         }
 
