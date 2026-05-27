@@ -7,8 +7,6 @@ backend:
 media_folder: "images/uploads"
 public_folder: "/images/uploads"
 
-local_backend: false
-
 collections:
   - name: "cars"
     label: "Auto in Vendita"
