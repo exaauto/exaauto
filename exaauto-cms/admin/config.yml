@@ -2,9 +2,12 @@ backend:
   name: github
   repo: exaauto/exaauto
   branch: main
+  auth_scope: repo
 
 media_folder: "images/uploads"
 public_folder: "/images/uploads"
+
+local_backend: false
 
 collections:
   - name: "cars"
