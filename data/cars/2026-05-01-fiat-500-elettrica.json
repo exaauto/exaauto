@@ -1,0 +1,12 @@
+{
+  "title": "Fiat 500 Elettrica",
+  "price": 18500,
+  "year": 2022,
+  "km": "25.000",
+  "fuel": "Elettrica",
+  "image": "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&h=400&fit=crop",
+  "badge": "Elettrica",
+  "excerpt": "Fiat 500 Elettrica in ottime condizioni, batteria in garanzia. Perfetta per la città, autonomia di 320 km.",
+  "featured": true,
+  "date": "2026-05-01T10:00:00.000Z"
+}

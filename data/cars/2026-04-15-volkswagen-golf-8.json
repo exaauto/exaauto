@@ -1,0 +1,12 @@
+{
+  "title": "Volkswagen Golf 8",
+  "price": 22900,
+  "year": 2021,
+  "km": "45.000",
+  "fuel": "Diesel",
+  "image": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=400&fit=crop",
+  "badge": "Appena arrivata",
+  "excerpt": "Golf 8 2.0 TDI, cambio DSG, full optional. Tagliandi certificati, unico proprietario.",
+  "featured": true,
+  "date": "2026-04-15T10:00:00.000Z"
+}

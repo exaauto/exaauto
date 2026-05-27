@@ -134,13 +134,10 @@
         }, {threshold: 0.15});
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        // Helper: carica e ordina elementi JSON da una cartella
         async function loadCMSItems(folder) {
-            const res = await fetch(folder);
-            const html = await res.text();
-            const doc = new DOMParser().parseFromString(html, 'text/html');
-            const links = Array.from(doc.querySelectorAll('a')).filter(a => a.href.endsWith('.json'));
-            const items = await Promise.all(links.map(async link => (await fetch(link.href)).json()));
+            const res = await fetch(folder + 'index.json');
+            const files = await res.json();
+            const items = await Promise.all(files.map(async f => (await fetch(folder + f)).json()));
             return items.sort((a, b) => new Date(b.date) - new Date(a.date));
         }
 
