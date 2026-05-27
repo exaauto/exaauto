@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExaAuto Admin | Gestione Contenuti</title>
-    <meta name="description" content="ExaAuto Admin - Gestisci annunci auto e novità">
+    <title>ExaAuto Admin | CMS</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -38,7 +37,84 @@
             line-height: 1.6;
         }
 
-        /* Header */
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 60px 40px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-logo {
+            font-family: var(--font-display);
+            font-size: 48px;
+            letter-spacing: 0.08em;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-logo span {
+            color: var(--red);
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .login-input {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 14px 16px;
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .login-input:focus {
+            border-color: var(--red);
+        }
+
+        .login-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .login-btn {
+            background: var(--red);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 3px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s var(--ease);
+        }
+
+        .login-btn:hover {
+            background: var(--red-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Admin Screen */
+        .admin-screen {
+            display: none;
+        }
+
         .admin-header {
             position: fixed;
             top: 0;
@@ -59,7 +135,6 @@
             font-family: var(--font-display);
             font-size: 24px;
             letter-spacing: 0.08em;
-            color: var(--text);
         }
 
         .admin-logo span {
@@ -68,10 +143,10 @@
 
         .admin-nav {
             display: flex;
-            gap: 8px;
+            gap: 12px;
         }
 
-        .admin-btn {
+        .btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -80,145 +155,122 @@
             font-family: var(--font-body);
             font-size: 13px;
             font-weight: 500;
-            letter-spacing: 0.04em;
             cursor: pointer;
             border: none;
             transition: all 0.25s var(--ease);
         }
 
-        .admin-btn--primary {
+        .btn-primary {
             background: var(--red);
             color: #fff;
         }
 
-        .admin-btn--primary:hover {
+        .btn-primary:hover {
             background: var(--red-dark);
             transform: translateY(-2px);
         }
 
-        .admin-btn--secondary {
+        .btn-secondary {
             background: var(--surface);
             color: var(--text-muted);
             border: 1px solid var(--border);
         }
 
-        .admin-btn--secondary:hover {
+        .btn-secondary:hover {
             background: var(--surface2);
             color: var(--text);
         }
 
-        /* Main Container */
+        /* Sidebar */
         .admin-container {
             display: flex;
-            min-height: 100vh;
-            padding-top: 72px;
+            margin-top: 72px;
+            min-height: calc(100vh - 72px);
         }
 
-        /* Sidebar */
-        .admin-sidebar {
-            width: 280px;
+        .sidebar {
+            width: 250px;
             background: var(--bg2);
             border-right: 1px solid var(--border);
             padding: 32px 0;
-            height: calc(100vh - 72px);
             position: sticky;
             top: 72px;
+            height: calc(100vh - 72px);
+            overflow-y: auto;
         }
 
-        .admin-sidebar-title {
-            padding: 0 24px 16px;
-            font-size: 11px;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            margin-bottom: 12px;
-        }
-
-        .admin-sidebar-item {
-            display: block;
+        .sidebar-item {
             padding: 12px 24px;
             color: var(--text-muted);
-            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
             border-left: 2px solid transparent;
+            display: block;
             background: none;
             border: none;
             width: 100%;
             text-align: left;
+            font-size: 14px;
         }
 
-        .admin-sidebar-item:hover {
+        .sidebar-item:hover {
             color: var(--text);
             background: rgba(255, 255, 255, 0.02);
         }
 
-        .admin-sidebar-item.active {
+        .sidebar-item.active {
             color: var(--red);
             border-left-color: var(--red);
             background: rgba(224, 30, 55, 0.08);
         }
 
-        /* Content */
-        .admin-content {
+        /* Main Content */
+        .main-content {
             flex: 1;
             padding: 40px 5%;
             overflow-y: auto;
         }
 
-        .admin-content-header {
+        .content-header {
             margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .admin-content-title {
+        .content-title {
             font-family: var(--font-display);
             font-size: 48px;
             letter-spacing: 0.02em;
-            margin-bottom: 8px;
-        }
-
-        .admin-content-subtitle {
-            font-size: 14px;
-            color: var(--text-muted);
         }
 
         /* Section */
-        .admin-section {
+        .section {
             display: none;
         }
 
-        .admin-section.active {
+        .section.active {
             display: block;
         }
 
-        /* Form Grid */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .form-grid.full {
-            grid-template-columns: 1fr;
-        }
-
+        /* Form */
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            margin-bottom: 24px;
         }
 
-        .form-group label {
+        .form-label {
+            display: block;
             font-size: 12px;
             letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--text-muted);
+            margin-bottom: 8px;
         }
 
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 3px;
@@ -230,25 +282,24 @@
             transition: border-color 0.2s;
         }
 
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: var(--text-dim);
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
             border-color: var(--red);
         }
 
-        .form-group textarea {
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-dim);
+        }
+
+        .form-textarea {
             resize: vertical;
             min-height: 120px;
         }
 
-        /* File Upload */
-        .file-upload {
-            position: relative;
+        /* Image Upload */
+        .image-upload {
             background: var(--surface);
             border: 2px dashed var(--border);
             border-radius: 3px;
@@ -258,32 +309,27 @@
             transition: all 0.2s;
         }
 
-        .file-upload:hover {
+        .image-upload:hover {
             border-color: var(--red);
             background: rgba(224, 30, 55, 0.04);
         }
 
-        .file-upload input[type="file"] {
+        .image-upload input {
             display: none;
         }
 
-        .file-upload-text {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .file-upload-preview {
+        .image-preview {
             margin-top: 16px;
         }
 
-        .file-upload-preview img {
+        .image-preview img {
             max-width: 100%;
             max-height: 200px;
             border-radius: 3px;
         }
 
-        /* Item List */
-        .item-list {
+        /* Item Grid */
+        .item-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 24px;
@@ -314,27 +360,26 @@
             padding: 20px;
         }
 
-        .item-card-title {
+        .item-title {
             font-family: var(--font-display);
             font-size: 20px;
             letter-spacing: 0.03em;
             margin-bottom: 8px;
-            line-height: 1.2;
         }
 
-        .item-card-meta {
+        .item-meta {
             font-size: 12px;
             color: var(--text-dim);
             margin-bottom: 12px;
         }
 
-        .item-card-actions {
+        .item-actions {
             display: flex;
             gap: 8px;
             margin-top: 16px;
         }
 
-        .item-card-action {
+        .item-action {
             flex: 1;
             padding: 8px 12px;
             font-size: 12px;
@@ -346,65 +391,9 @@
             transition: all 0.2s;
         }
 
-        .item-card-action:hover {
+        .item-action:hover {
             background: var(--red);
             color: #fff;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-
-        .empty-state-text {
-            color: var(--text-muted);
-            margin-bottom: 24px;
-        }
-
-        /* Info Box */
-        .info-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 32px;
-            margin-top: 24px;
-        }
-
-        .info-box h3 {
-            font-family: var(--font-display);
-            font-size: 20px;
-            margin-bottom: 20px;
-        }
-
-        .info-box p {
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            line-height: 1.6;
-        }
-
-        .info-box-code {
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            padding: 16px;
-            margin: 16px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            color: #4ade80;
-            overflow-x: auto;
-        }
-
-        .info-box-links {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-            flex-wrap: wrap;
         }
 
         /* Modal */
@@ -437,11 +426,11 @@
             overflow-y: auto;
         }
 
-        .modal-header {
-            margin-bottom: 24px;
+        .modal-title {
             font-family: var(--font-display);
             font-size: 32px;
             letter-spacing: 0.02em;
+            margin-bottom: 24px;
         }
 
         .modal-footer {
@@ -451,291 +440,334 @@
             justify-content: flex-end;
         }
 
-        /* Responsive */
-        @media (max-width: 1100px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .item-list {
-                grid-template-columns: 1fr;
-            }
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1/-1;
         }
 
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state-text {
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .admin-container {
-                flex-direction: column;
+            .item-grid {
+                grid-template-columns: 1fr;
             }
 
-            .admin-sidebar {
+            .sidebar {
                 width: 100%;
                 height: auto;
+                position: static;
                 border-right: none;
                 border-bottom: 1px solid var(--border);
                 display: flex;
-                gap: 8px;
                 padding: 16px 5%;
-                position: static;
+                gap: 8px;
                 flex-wrap: wrap;
             }
 
-            .admin-sidebar-title {
-                display: none;
-            }
-
-            .admin-sidebar-item {
+            .sidebar-item {
                 padding: 8px 16px;
                 white-space: nowrap;
             }
 
-            .admin-content {
-                padding: 24px 5%;
-            }
-
-            .admin-content-title {
+            .content-title {
                 font-size: 32px;
             }
 
-            .info-box-links {
-                flex-direction: column;
-            }
-
-            .admin-btn {
-                width: 100%;
-                justify-content: center;
+            .login-box {
+                padding: 40px 20px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="admin-header">
-        <div class="admin-logo">EXA<span>AUTO</span> Admin</div>
-        <div class="admin-nav">
-            <button class="admin-btn admin-btn--secondary" onclick="goToWebsite()">← Torna al sito</button>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <div class="login-logo">EXA<span>AUTO</span></div>
+            <form class="login-form" onsubmit="login(event)">
+                <input type="password" id="passwordInput" class="login-input" placeholder="Inserisci password" required>
+                <button type="submit" class="login-btn">Accedi</button>
+            </form>
         </div>
-    </header>
+    </div>
 
-    <!-- Main Container -->
-    <div class="admin-container">
-        <!-- Sidebar -->
-        <aside class="admin-sidebar">
-            <div class="admin-sidebar-title">Gestione</div>
-            <button class="admin-sidebar-item active" onclick="showSection('cars')">📸 Annunci Auto</button>
-            <button class="admin-sidebar-item" onclick="showSection('news')">📰 Novità & Blog</button>
-            <button class="admin-sidebar-item" onclick="showSection('settings')">⚙️ Impostazioni</button>
-        </aside>
+    <!-- Admin Screen -->
+    <div class="admin-screen" id="adminScreen">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-logo">EXA<span>AUTO</span> Admin</div>
+            <div class="admin-nav">
+                <button class="btn btn-secondary" onclick="downloadData()">⬇️ Backup</button>
+                <button class="btn btn-secondary" onclick="uploadData()">⬆️ Ripristina</button>
+                <button class="btn btn-secondary" onclick="logout()">🚪 Esci</button>
+            </div>
+        </header>
 
-        <!-- Content -->
-        <main class="admin-content">
-            <!-- Cars Section -->
-            <section id="cars" class="admin-section active">
-                <div class="admin-content-header">
-                    <h1 class="admin-content-title">Annunci Auto</h1>
-                    <p class="admin-content-subtitle">Aggiungi, modifica o elimina gli annunci dei tuoi veicoli</p>
-                </div>
+        <!-- Container -->
+        <div class="admin-container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <button class="sidebar-item active" onclick="showSection('cars')">📸 Annunci Auto</button>
+                <button class="sidebar-item" onclick="showSection('news')">📰 Novità & Blog</button>
+            </aside>
 
-                <button class="admin-btn admin-btn--primary" onclick="openCarModal()">+ Aggiungi Auto</button>
-
-                <div id="carsList" class="item-list">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">🚗</div>
-                        <p class="empty-state-text">Nessun annuncio al momento. Inizia aggiungendo la tua prima auto!</p>
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Auto Section -->
+                <section class="section active" id="cars">
+                    <div class="content-header">
+                        <h1 class="content-title">Annunci Auto</h1>
+                        <button class="btn btn-primary" onclick="openAddCarModal()">+ Aggiungi Auto</button>
                     </div>
-                </div>
-            </section>
+                    <div id="carsList" class="item-grid"></div>
+                </section>
 
-            <!-- News Section -->
-            <section id="news" class="admin-section">
-                <div class="admin-content-header">
-                    <h1 class="admin-content-title">Novità & Blog</h1>
-                    <p class="admin-content-subtitle">Condividi articoli, news e aggiornamenti con i tuoi clienti</p>
-                </div>
-
-                <button class="admin-btn admin-btn--primary" onclick="openNewsModal()">+ Aggiungi Articolo</button>
-
-                <div id="newsList" class="item-list">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📝</div>
-                        <p class="empty-state-text">Nessun articolo al momento. Raccontaci le tue novità!</p>
+                <!-- News Section -->
+                <section class="section" id="news">
+                    <div class="content-header">
+                        <h1 class="content-title">Novità & Blog</h1>
+                        <button class="btn btn-primary" onclick="openAddNewsModal()">+ Aggiungi Articolo</button>
                     </div>
-                </div>
-            </section>
-
-            <!-- Settings Section -->
-            <section id="settings" class="admin-section">
-                <div class="admin-content-header">
-                    <h1 class="admin-content-title">Impostazioni</h1>
-                    <p class="admin-content-subtitle">Gestisci le configurazioni generali del sito</p>
-                </div>
-
-                <div class="info-box">
-                    <h3>📁 Gestione Contenuti via GitHub</h3>
-                    <p>Poiché il sito è hostato su <strong>Cloudflare Pages</strong>, tutti i contenuti (auto e articoli) sono gestiti direttamente via GitHub nel tuo repository:</p>
-                    
-                    <div class="info-box-code">
-                        📦 exaauto/exaauto/data/<br>
-                        ├── cars/        (annunci auto in JSON)<br>
-                        └── news/        (articoli in JSON)
-                    </div>
-
-                    <p><strong>Come funziona:</strong></p>
-                    <ul style="color: var(--text-muted); margin-left: 20px; margin-bottom: 16px;">
-                        <li>Aggiungi un'auto o un articolo nel form qui accanto</li>
-                        <li>I dati vengono salvati come file JSON in GitHub</li>
-                        <li>Cloudflare Pages legge automaticamente i file e li mostra sul sito</li>
-                        <li>Non servono account esterni - tutto tramite GitHub!</li>
-                    </ul>
-
-                    <div class="info-box-links">
-                        <a href="https://github.com/exaauto/exaauto/tree/main/data/cars" target="_blank" class="admin-btn admin-btn--secondary">📂 Visualizza Auto su GitHub</a>
-                        <a href="https://github.com/exaauto/exaauto/tree/main/data/news" target="_blank" class="admin-btn admin-btn--secondary">📂 Visualizza Articoli su GitHub</a>
-                    </div>
-                </div>
-
-                <div class="info-box">
-                    <h3>🔧 Configurazione Avanzata</h3>
-                    <p>Per modifiche più avanzate o per usare un CMS esterno, puoi configurare:</p>
-                    
-                    <p><strong>Opzione 1: Netlify CMS (alternativa)</strong></p>
-                    <p style="margin-bottom: 16px;">Nonostante usi Cloudflare Pages, puoi comunque usare Netlify CMS per una gestione più facile. Contatta il supporto Netlify per la configurazione con Cloudflare Pages.</p>
-
-                    <p><strong>Opzione 2: Modifica diretta su GitHub</strong></p>
-                    <p>Accedi al tuo repository e modifica i file JSON nella cartella <code style="background: var(--bg3); padding: 2px 6px; border-radius: 2px;">data/</code></p>
-
-                    <div class="info-box-links">
-                        <a href="https://github.com/exaauto/exaauto" target="_blank" class="admin-btn admin-btn--primary">🔗 Vai al Repository GitHub</a>
-                    </div>
-                </div>
-            </section>
-        </main>
+                    <div id="newsList" class="item-grid"></div>
+                </section>
+            </main>
+        </div>
     </div>
 
     <!-- Car Modal -->
-    <div id="carModal" class="modal">
+    <div class="modal" id="carModal">
         <div class="modal-content">
-            <h2 class="modal-header">Aggiungi Auto</h2>
-            
-            <div class="form-group">
-                <label>Titolo Auto *</label>
-                <input type="text" id="carTitle" placeholder="Es: Audi A4 Sportback" required>
-            </div>
-
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Prezzo (€) *</label>
-                    <input type="number" id="carPrice" placeholder="25000" required>
-                </div>
-                <div class="form-group">
-                    <label>Anno *</label>
-                    <input type="number" id="carYear" placeholder="2022" required>
-                </div>
-                <div class="form-group">
-                    <label>Km *</label>
-                    <input type="text" id="carKm" placeholder="45000" required>
-                </div>
-                <div class="form-group">
-                    <label>Alimentazione *</label>
-                    <input type="text" id="carFuel" placeholder="Benzina / Diesel / Ibrido" required>
-                </div>
-            </div>
+            <h2 class="modal-title" id="carModalTitle">Aggiungi Auto</h2>
 
             <div class="form-group">
-                <label>Badge (opzionale)</label>
-                <input type="text" id="carBadge" placeholder="Es: Ribassato, In Arrivo, Offerta">
+                <label class="form-label">Titolo *</label>
+                <input type="text" class="form-input" id="carTitle" placeholder="Es: Audi A4 Sportback" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Prezzo (€) *</label>
+                    <input type="number" class="form-input" id="carPrice" placeholder="25000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Anno *</label>
+                    <input type="number" class="form-input" id="carYear" placeholder="2022" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Km *</label>
+                    <input type="text" class="form-input" id="carKm" placeholder="45000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Alimentazione *</label>
+                    <input type="text" class="form-input" id="carFuel" placeholder="Benzina" required>
+                </div>
             </div>
 
             <div class="form-group">
-                <label>Descrizione Breve *</label>
-                <textarea id="carExcerpt" placeholder="Descrizione breve che apparirà nella card" required></textarea>
+                <label class="form-label">Badge (opzionale)</label>
+                <input type="text" class="form-input" id="carBadge" placeholder="Es: Ribassato">
             </div>
 
             <div class="form-group">
-                <label>Immagine *</label>
-                <div class="file-upload" onclick="document.getElementById('carImage').click()">
+                <label class="form-label">Descrizione *</label>
+                <textarea class="form-textarea" id="carExcerpt" placeholder="Descrizione breve" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Foto *</label>
+                <div class="image-upload" onclick="document.getElementById('carImage').click()">
                     <input type="file" id="carImage" accept="image/*" required>
-                    <div class="file-upload-text">📁 Clicca per caricare l'immagine</div>
-                    <div id="carImagePreview" class="file-upload-preview"></div>
+                    <div>📁 Clicca per caricare</div>
+                    <div id="carImagePreview" class="image-preview"></div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>In Evidenza?</label>
-                <select id="carFeatured" style="height: 44px;">
+                <label class="form-label">In Evidenza?</label>
+                <select class="form-select" id="carFeatured">
                     <option value="false">No</option>
                     <option value="true">Sì</option>
                 </select>
             </div>
 
             <div class="modal-footer">
-                <button class="admin-btn admin-btn--secondary" onclick="closeCarModal()">Annulla</button>
-                <button class="admin-btn admin-btn--primary" onclick="saveCarData()">Salva Auto</button>
+                <button class="btn btn-secondary" onclick="closeCarModal()">Annulla</button>
+                <button class="btn btn-primary" onclick="saveCarData()">Salva</button>
             </div>
         </div>
     </div>
 
     <!-- News Modal -->
-    <div id="newsModal" class="modal">
+    <div class="modal" id="newsModal">
         <div class="modal-content">
-            <h2 class="modal-header">Aggiungi Articolo</h2>
-            
+            <h2 class="modal-title" id="newsModalTitle">Aggiungi Articolo</h2>
+
             <div class="form-group">
-                <label>Titolo Articolo *</label>
-                <input type="text" id="newsTitle" placeholder="Es: Nuovo Modello Disponibile" required>
+                <label class="form-label">Titolo *</label>
+                <input type="text" class="form-input" id="newsTitle" placeholder="Es: Nuovo Modello" required>
             </div>
 
             <div class="form-group">
-                <label>Categoria *</label>
-                <input type="text" id="newsCategory" placeholder="Es: Notizie, Guide, Consigli" required>
+                <label class="form-label">Categoria *</label>
+                <input type="text" class="form-input" id="newsCategory" placeholder="Es: Notizie" required>
             </div>
 
             <div class="form-group">
-                <label>Immagine *</label>
-                <div class="file-upload" onclick="document.getElementById('newsImage').click()">
+                <label class="form-label">Foto *</label>
+                <div class="image-upload" onclick="document.getElementById('newsImage').click()">
                     <input type="file" id="newsImage" accept="image/*" required>
-                    <div class="file-upload-text">📁 Clicca per caricare l'immagine</div>
-                    <div id="newsImagePreview" class="file-upload-preview"></div>
+                    <div>📁 Clicca per caricare</div>
+                    <div id="newsImagePreview" class="image-preview"></div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Anteprima (breve descrizione) *</label>
-                <textarea id="newsExcerpt" placeholder="Breve anteprima che apparirà nella card" required></textarea>
+                <label class="form-label">Anteprima *</label>
+                <textarea class="form-textarea" id="newsExcerpt" placeholder="Breve anteprima" required></textarea>
             </div>
 
-            <div class="form-group full">
-                <label>Contenuto Completo (Markdown supportato) *</label>
-                <textarea id="newsBody" placeholder="Scrivi il contenuto completo dell'articolo. Puoi usare Markdown." required style="min-height: 240px;"></textarea>
-                <small style="color: var(--text-dim); margin-top: 4px;">Puoi usare: **grassetto**, *corsivo*, [link](url), # Titoli, ecc.</small>
+            <div class="form-group">
+                <label class="form-label">Contenuto Completo *</label>
+                <textarea class="form-textarea" id="newsBody" placeholder="Contenuto completo" required style="min-height: 200px;"></textarea>
             </div>
 
             <div class="modal-footer">
-                <button class="admin-btn admin-btn--secondary" onclick="closeNewsModal()">Annulla</button>
-                <button class="admin-btn admin-btn--primary" onclick="saveNewsData()">Salva Articolo</button>
+                <button class="btn btn-secondary" onclick="closeNewsModal()">Annulla</button>
+                <button class="btn btn-primary" onclick="saveNewsData()">Salva</button>
             </div>
         </div>
     </div>
 
+    <input type="file" id="uploadFile" style="display: none;" accept=".json" onchange="importData(event)">
+
     <script>
-        // Show section
+        const ADMIN_PASSWORD = 'exaauto2024';
+        let currentEditingCar = null;
+        let currentEditingNews = null;
+
+        // Check if already logged in
+        if (sessionStorage.getItem('adminLoggedIn')) {
+            showAdminScreen();
+            loadData();
+        }
+
+        function login(e) {
+            e.preventDefault();
+            const password = document.getElementById('passwordInput').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                showAdminScreen();
+                loadData();
+            } else {
+                alert('❌ Password errata');
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        function logout() {
+            if (confirm('Sei sicuro di voler uscire?')) {
+                sessionStorage.removeItem('adminLoggedIn');
+                location.reload();
+            }
+        }
+
+        function showAdminScreen() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminScreen').style.display = 'block';
+        }
+
         function showSection(section) {
-            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.admin-sidebar-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
             document.getElementById(section).classList.add('active');
             event.target.classList.add('active');
         }
 
-        // Car Modal Functions
-        function openCarModal() {
-            document.getElementById('carModal').classList.add('active');
+        // Data Management
+        function loadData() {
+            const cars = JSON.parse(localStorage.getItem('exaauto_cars')) || [];
+            const news = JSON.parse(localStorage.getItem('exaauto_news')) || [];
+            
+            renderCars(cars);
+            renderNews(news);
         }
 
-        function closeCarModal() {
-            document.getElementById('carModal').classList.remove('active');
-            resetCarForm();
+        function getCars() {
+            return JSON.parse(localStorage.getItem('exaauto_cars')) || [];
         }
 
-        function resetCarForm() {
+        function getNews() {
+            return JSON.parse(localStorage.getItem('exaauto_news')) || [];
+        }
+
+        function saveCars(cars) {
+            localStorage.setItem('exaauto_cars', JSON.stringify(cars));
+        }
+
+        function saveNews(news) {
+            localStorage.setItem('exaauto_news', JSON.stringify(news));
+        }
+
+        // Render Functions
+        function renderCars(cars) {
+            if (cars.length === 0) {
+                document.getElementById('carsList').innerHTML = '<div class="empty-state"><div class="empty-state-icon">🚗</div><p class="empty-state-text">Nessun annuncio. Aggiungine uno!</p></div>';
+                return;
+            }
+
+            document.getElementById('carsList').innerHTML = cars.map((car, idx) => `
+                <div class="item-card">
+                    <img src="${car.image}" alt="${car.title}" class="item-card-img">
+                    <div class="item-card-body">
+                        <h3 class="item-title">${car.title}</h3>
+                        <div class="item-meta">${car.year} · ${car.km} km · ${car.fuel}</div>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">€ ${Number(car.price).toLocaleString('it-IT')}</p>
+                        <div class="item-actions">
+                            <button class="item-action" onclick="editCar(${idx})">✏️ Modifica</button>
+                            <button class="item-action" onclick="deleteCar(${idx})">🗑️ Elimina</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderNews(news) {
+            if (news.length === 0) {
+                document.getElementById('newsList').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><p class="empty-state-text">Nessun articolo. Aggiungine uno!</p></div>';
+                return;
+            }
+
+            document.getElementById('newsList').innerHTML = news.map((item, idx) => `
+                <div class="item-card">
+                    <img src="${item.image}" alt="${item.title}" class="item-card-img">
+                    <div class="item-card-body">
+                        <h3 class="item-title">${item.title}</h3>
+                        <div class="item-meta">${item.category}</div>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">${item.excerpt}</p>
+                        <div class="item-actions">
+                            <button class="item-action" onclick="editNews(${idx})">✏️ Modifica</button>
+                            <button class="item-action" onclick="deleteNews(${idx})">🗑️ Elimina</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Car Functions
+        function openAddCarModal() {
+            currentEditingCar = null;
+            document.getElementById('carModalTitle').textContent = 'Aggiungi Auto';
             document.getElementById('carTitle').value = '';
             document.getElementById('carPrice').value = '';
             document.getElementById('carYear').value = '';
@@ -746,106 +778,266 @@
             document.getElementById('carImage').value = '';
             document.getElementById('carImagePreview').innerHTML = '';
             document.getElementById('carFeatured').value = 'false';
+            document.getElementById('carModal').classList.add('active');
         }
 
-        // Image preview
-        document.getElementById('carImage')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    document.getElementById('carImagePreview').innerHTML = `<img src="${event.target.result}" alt="Preview">`;
-                };
-                reader.readAsDataURL(file);
+        function editCar(idx) {
+            const cars = getCars();
+            const car = cars[idx];
+            currentEditingCar = idx;
+
+            document.getElementById('carModalTitle').textContent = 'Modifica Auto';
+            document.getElementById('carTitle').value = car.title;
+            document.getElementById('carPrice').value = car.price;
+            document.getElementById('carYear').value = car.year;
+            document.getElementById('carKm').value = car.km;
+            document.getElementById('carFuel').value = car.fuel;
+            document.getElementById('carBadge').value = car.badge;
+            document.getElementById('carExcerpt').value = car.excerpt;
+            document.getElementById('carFeatured').value = car.featured;
+            document.getElementById('carImagePreview').innerHTML = `<img src="${car.image}" alt="Preview">`;
+            document.getElementById('carImage').value = '';
+
+            document.getElementById('carModal').classList.add('active');
+        }
+
+        function closeCarModal() {
+            document.getElementById('carModal').classList.remove('active');
+        }
+
+        function deleteCar(idx) {
+            if (confirm('Sei sicuro? Questa azione non può essere annullata.')) {
+                const cars = getCars();
+                cars.splice(idx, 1);
+                saveCars(cars);
+                renderCars(cars);
             }
-        });
+        }
 
         function saveCarData() {
-            const carData = {
-                title: document.getElementById('carTitle').value,
-                price: document.getElementById('carPrice').value,
-                year: parseInt(document.getElementById('carYear').value),
-                km: document.getElementById('carKm').value,
-                fuel: document.getElementById('carFuel').value,
-                badge: document.getElementById('carBadge').value,
-                excerpt: document.getElementById('carExcerpt').value,
-                featured: document.getElementById('carFeatured').value === 'true',
-                date: new Date().toISOString(),
-                image: "https://via.placeholder.com/800x400"
-            };
+            const imageFile = document.getElementById('carImage').files[0];
+            
+            if (!document.getElementById('carTitle').value) {
+                alert('Completa il titolo');
+                return;
+            }
 
-            console.log('Auto da salvare:', carData);
-            alert('✅ Dati auto salvati!\n\n📝 Passo successivo:\n1. Copia i dati mostrati in console (F12)\n2. Vai su: github.com/exaauto/exaauto\n3. Naviga in data/cars/\n4. Crea un nuovo file JSON con i dati\n5. Commit e il sito si aggiornerà automaticamente!');
-            console.log(JSON.stringify(carData, null, 2));
-            closeCarModal();
+            if (currentEditingCar === null && !imageFile) {
+                alert('Carica una foto');
+                return;
+            }
+
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const carData = {
+                        title: document.getElementById('carTitle').value,
+                        price: document.getElementById('carPrice').value,
+                        year: document.getElementById('carYear').value,
+                        km: document.getElementById('carKm').value,
+                        fuel: document.getElementById('carFuel').value,
+                        badge: document.getElementById('carBadge').value,
+                        excerpt: document.getElementById('carExcerpt').value,
+                        featured: document.getElementById('carFeatured').value === 'true',
+                        image: e.target.result,
+                        date: new Date().toISOString()
+                    };
+
+                    const cars = getCars();
+                    if (currentEditingCar !== null) {
+                        cars[currentEditingCar] = carData;
+                    } else {
+                        cars.push(carData);
+                    }
+                    saveCars(cars);
+                    renderCars(cars);
+                    closeCarModal();
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                const carData = {
+                    title: document.getElementById('carTitle').value,
+                    price: document.getElementById('carPrice').value,
+                    year: document.getElementById('carYear').value,
+                    km: document.getElementById('carKm').value,
+                    fuel: document.getElementById('carFuel').value,
+                    badge: document.getElementById('carBadge').value,
+                    excerpt: document.getElementById('carExcerpt').value,
+                    featured: document.getElementById('carFeatured').value === 'true',
+                    image: document.getElementById('carImagePreview').innerHTML.match(/src="([^"]*)"/)[1],
+                    date: new Date().toISOString()
+                };
+
+                const cars = getCars();
+                cars[currentEditingCar] = carData;
+                saveCars(cars);
+                renderCars(cars);
+                closeCarModal();
+            }
         }
 
-        // News Modal Functions
-        function openNewsModal() {
+        // News Functions
+        function openAddNewsModal() {
+            currentEditingNews = null;
+            document.getElementById('newsModalTitle').textContent = 'Aggiungi Articolo';
+            document.getElementById('newsTitle').value = '';
+            document.getElementById('newsCategory').value = '';
+            document.getElementById('newsExcerpt').value = '';
+            document.getElementById('newsBody').value = '';
+            document.getElementById('newsImage').value = '';
+            document.getElementById('newsImagePreview').innerHTML = '';
+            document.getElementById('newsModal').classList.add('active');
+        }
+
+        function editNews(idx) {
+            const news = getNews();
+            const item = news[idx];
+            currentEditingNews = idx;
+
+            document.getElementById('newsModalTitle').textContent = 'Modifica Articolo';
+            document.getElementById('newsTitle').value = item.title;
+            document.getElementById('newsCategory').value = item.category;
+            document.getElementById('newsExcerpt').value = item.excerpt;
+            document.getElementById('newsBody').value = item.body;
+            document.getElementById('newsImagePreview').innerHTML = `<img src="${item.image}" alt="Preview">`;
+            document.getElementById('newsImage').value = '';
+
             document.getElementById('newsModal').classList.add('active');
         }
 
         function closeNewsModal() {
             document.getElementById('newsModal').classList.remove('active');
-            resetNewsForm();
         }
 
-        function resetNewsForm() {
-            document.getElementById('newsTitle').value = '';
-            document.getElementById('newsCategory').value = '';
-            document.getElementById('newsImage').value = '';
-            document.getElementById('newsImagePreview').innerHTML = '';
-            document.getElementById('newsExcerpt').value = '';
-            document.getElementById('newsBody').value = '';
+        function deleteNews(idx) {
+            if (confirm('Sei sicuro? Questa azione non può essere annullata.')) {
+                const news = getNews();
+                news.splice(idx, 1);
+                saveNews(news);
+                renderNews(news);
+            }
         }
+
+        function saveNewsData() {
+            const imageFile = document.getElementById('newsImage').files[0];
+            
+            if (!document.getElementById('newsTitle').value) {
+                alert('Completa il titolo');
+                return;
+            }
+
+            if (currentEditingNews === null && !imageFile) {
+                alert('Carica una foto');
+                return;
+            }
+
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const newsData = {
+                        title: document.getElementById('newsTitle').value,
+                        category: document.getElementById('newsCategory').value,
+                        excerpt: document.getElementById('newsExcerpt').value,
+                        body: document.getElementById('newsBody').value,
+                        image: e.target.result,
+                        date: new Date().toISOString()
+                    };
+
+                    const news = getNews();
+                    if (currentEditingNews !== null) {
+                        news[currentEditingNews] = newsData;
+                    } else {
+                        news.push(newsData);
+                    }
+                    saveNews(news);
+                    renderNews(news);
+                    closeNewsModal();
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                const newsData = {
+                    title: document.getElementById('newsTitle').value,
+                    category: document.getElementById('newsCategory').value,
+                    excerpt: document.getElementById('newsExcerpt').value,
+                    body: document.getElementById('newsBody').value,
+                    image: document.getElementById('newsImagePreview').innerHTML.match(/src="([^"]*)"/)[1],
+                    date: new Date().toISOString()
+                };
+
+                const news = getNews();
+                news[currentEditingNews] = newsData;
+                saveNews(news);
+                renderNews(news);
+                closeNewsModal();
+            }
+        }
+
+        // Backup Functions
+        function downloadData() {
+            const data = {
+                cars: getCars(),
+                news: getNews(),
+                timestamp: new Date().toISOString()
+            };
+
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `exaauto-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        function uploadData() {
+            document.getElementById('uploadFile').click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.cars) localStorage.setItem('exaauto_cars', JSON.stringify(data.cars));
+                    if (data.news) localStorage.setItem('exaauto_news', JSON.stringify(data.news));
+                    alert('✅ Dati ripristinati!');
+                    loadData();
+                } catch (error) {
+                    alert('❌ File non valido');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Handle image preview clicks
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Image preview handlers
+        document.getElementById('carImage')?.addEventListener('change', function(e) {
+            if (e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('carImagePreview').innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
 
         document.getElementById('newsImage')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
+            if (e.target.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     document.getElementById('newsImagePreview').innerHTML = `<img src="${event.target.result}" alt="Preview">`;
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(e.target.files[0]);
             }
-        });
-
-        function saveNewsData() {
-            const newsData = {
-                title: document.getElementById('newsTitle').value,
-                category: document.getElementById('newsCategory').value,
-                excerpt: document.getElementById('newsExcerpt').value,
-                body: document.getElementById('newsBody').value,
-                date: new Date().toISOString(),
-                image: "https://via.placeholder.com/800x400"
-            };
-
-            console.log('Articolo da salvare:', newsData);
-            alert('✅ Dati articolo salvati!\n\n📝 Passo successivo:\n1. Copia i dati mostrati in console (F12)\n2. Vai su: github.com/exaauto/exaauto\n3. Naviga in data/news/\n4. Crea un nuovo file JSON con i dati\n5. Commit e il sito si aggiornerà automaticamente!');
-            console.log(JSON.stringify(newsData, null, 2));
-            closeNewsModal();
-        }
-
-        // Go to website
-        function goToWebsite() {
-            window.location.href = '../index.html';
-        }
-
-        // Close modal on ESC
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.getElementById('carModal').classList.remove('active');
-                document.getElementById('newsModal').classList.remove('active');
-            }
-        });
-
-        // Close modal on background click
-        document.getElementById('carModal')?.addEventListener('click', function(e) {
-            if (e.target === this) this.classList.remove('active');
-        });
-
-        document.getElementById('newsModal')?.addEventListener('click', function(e) {
-            if (e.target === this) this.classList.remove('active');
         });
     </script>
 </body>
