@@ -1,0 +1,36 @@
+backend:
+  name: github
+  repo: exaauto/exaauto
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "cars"
+    label: "Auto in Vendita"
+    folder: "data/cars"
+    create: true
+    extension: json
+    format: json
+    slug: "{{slug}}"
+    fields:
+      - {label: "Titolo", name: "title", widget: "string"}
+      - {label: "Prezzo", name: "price", widget: "string"}
+      - {label: "Anno", name: "year", widget: "number"}
+      - {label: "Km", name: "km", widget: "string"}
+      - {label: "Alimentazione", name: "fuel", widget: "string"}
+      - {label: "Immagine", name: "image", widget: "image"}
+      - {label: "Descrizione Breve", name: "excerpt", widget: "text"}
+  - name: "news"
+    label: "Novità"
+    folder: "data/news"
+    create: true
+    extension: json
+    format: json
+    slug: "{{slug}}"
+    fields:
+      - {label: "Titolo", name: "title", widget: "string"}
+      - {label: "Categoria", name: "category", widget: "string"}
+      - {label: "Immagine", name: "image", widget: "image"}
+      - {label: "Anteprima", name: "excerpt", widget: "text"}
