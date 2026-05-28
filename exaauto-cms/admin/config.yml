@@ -2,8 +2,6 @@ backend:
   name: github
   repo: exaauto/exaauto
   branch: main
-  auth_type: pkce
-  app_id: Ov23liS8zF5MXwZAd0nf
 
 media_folder: "exaauto-cms/images"
 public_folder: "/images"
