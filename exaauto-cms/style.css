@@ -215,7 +215,7 @@ HERO
 }
 
 /* ===========================
-STATS BAR (non usata, ma mantenuta per compatibilità)
+STATS BAR
 =========================== */
 .statsbar {
   display: flex; align-items: stretch; background: var(--surface);
