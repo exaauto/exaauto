@@ -2,11 +2,10 @@ backend:
   name: github
   repo: exaauto/exaauto
   branch: main
-  # Se utilizzi un gateway OAuth esterno per il login su Cloudflare (es. una Worker), scommenta la riga sotto:
-  # base_url: https://il-tuo-oauth-worker.cloudflareworkers.com
+  site_domain: exaauto.it
 
-media_folder: "images/uploads"
-public_folder: "/images/uploads"
+media_folder: "exaauto-cms/images"
+public_folder: "/images"
 
 collections:
   - name: "cars"
@@ -15,13 +14,13 @@ collections:
     create: true
     extension: json
     format: json
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{{slug}}"
     fields:
       - {label: "Titolo", name: "title", widget: "string"}
       - {label: "Prezzo", name: "price", widget: "string"}
       - {label: "Anno", name: "year", widget: "number"}
       - {label: "Km", name: "km", widget: "string"}
-      - {label: "Alimentazione", name: "fuel", widget: "string"}
+      - {label: "Alimentazione", name: "fuel", widget: "select", options: ["Benzina", "Diesel", "Ibrido", "Elettrico", "Gpl"]}
       - {label: "Immagine", name: "image", widget: "image"}
       - {label: "Badge", name: "badge", widget: "string", required: false}
       - {label: "Descrizione Breve", name: "excerpt", widget: "text"}
@@ -34,7 +33,7 @@ collections:
     create: true
     extension: json
     format: json
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{{slug}}"
     fields:
       - {label: "Titolo", name: "title", widget: "string"}
       - {label: "Categoria", name: "category", widget: "string"}
