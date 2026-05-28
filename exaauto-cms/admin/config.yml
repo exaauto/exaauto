@@ -2,7 +2,8 @@ backend:
   name: github
   repo: exaauto/exaauto
   branch: main
-  site_domain: exaauto.it
+  auth_type: pkce
+  app_id: Ov23liS8zF5MXwZAd0nf
 
 media_folder: "exaauto-cms/images"
 public_folder: "/images"
@@ -10,34 +11,40 @@ public_folder: "/images"
 collections:
   - name: "cars"
     label: "Auto in Vendita"
-    folder: "data/cars"
-    create: true
-    extension: json
-    format: json
-    slug: "{{slug}}"
-    fields:
-      - {label: "Titolo", name: "title", widget: "string"}
-      - {label: "Prezzo", name: "price", widget: "string"}
-      - {label: "Anno", name: "year", widget: "number"}
-      - {label: "Km", name: "km", widget: "string"}
-      - {label: "Alimentazione", name: "fuel", widget: "select", options: ["Benzina", "Diesel", "Ibrido", "Elettrico", "Gpl"]}
-      - {label: "Immagine", name: "image", widget: "image"}
-      - {label: "Badge", name: "badge", widget: "string", required: false}
-      - {label: "Descrizione Breve", name: "excerpt", widget: "text"}
-      - {label: "In Evidenza", name: "featured", widget: "boolean", default: false}
-      - {label: "Data", name: "date", widget: "datetime"}
+    files:
+      - name: "cars_list"
+        label: "Lista Auto"
+        file: "data/cars.json"
+        fields:
+          - name: items
+            label: Auto
+            widget: list
+            fields:
+              - {label: "Titolo", name: "title", widget: "string"}
+              - {label: "Prezzo", name: "price", widget: "string"}
+              - {label: "Anno", name: "year", widget: "number"}
+              - {label: "Km", name: "km", widget: "string"}
+              - {label: "Alimentazione", name: "fuel", widget: "select", options: ["Benzina", "Diesel", "Ibrido", "Elettrico", "Gpl"]}
+              - {label: "Immagine", name: "image", widget: "image"}
+              - {label: "Badge", name: "badge", widget: "string", required: false}
+              - {label: "Descrizione Breve", name: "excerpt", widget: "text"}
+              - {label: "In Evidenza", name: "featured", widget: "boolean", default: false}
+              - {label: "Data", name: "date", widget: "datetime"}
 
   - name: "news"
     label: "Novità & Blog"
-    folder: "data/news"
-    create: true
-    extension: json
-    format: json
-    slug: "{{slug}}"
-    fields:
-      - {label: "Titolo", name: "title", widget: "string"}
-      - {label: "Categoria", name: "category", widget: "string"}
-      - {label: "Immagine", name: "image", widget: "image"}
-      - {label: "Anteprima", name: "excerpt", widget: "text"}
-      - {label: "Contenuto Completo", name: "body", widget: "markdown"}
-      - {label: "Data", name: "date", widget: "datetime"}
+    files:
+      - name: "news_list"
+        label: "Lista Novità"
+        file: "data/news.json"
+        fields:
+          - name: items
+            label: Articoli
+            widget: list
+            fields:
+              - {label: "Titolo", name: "title", widget: "string"}
+              - {label: "Categoria", name: "category", widget: "string"}
+              - {label: "Immagine", name: "image", widget: "image"}
+              - {label: "Anteprima", name: "excerpt", widget: "text"}
+              - {label: "Contenuto Completo", name: "body", widget: "markdown"}
+              - {label: "Data", name: "date", widget: "datetime"}
