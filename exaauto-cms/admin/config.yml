@@ -2,7 +2,8 @@ backend:
   name: github
   repo: exaauto/exaauto
   branch: main
-  auth_scope: repo
+  # Se utilizzi un gateway OAuth esterno per il login su Cloudflare (es. una Worker), scommenta la riga sotto:
+  # base_url: https://il-tuo-oauth-worker.cloudflareworkers.com
 
 media_folder: "images/uploads"
 public_folder: "/images/uploads"
