@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- NAV -->
     <nav class="nav">
         <a href="index.html" class="nav__logo">EXA<span>AUTO</span></a>
         <div class="nav__links">
@@ -25,7 +24,6 @@
         <a href="#contatti" class="mm-link">Contatti</a>
     </div>
 
-    <!-- HERO -->
     <header class="hero">
         <div class="hero__bg">
             <div class="hero__gradient"></div>
@@ -46,7 +44,6 @@
         </div>
     </header>
 
-    <!-- ANNUNCI (Griglia vuota, riempita dallo script) -->
     <section class="annunci" id="annunci">
         <div class="section-header">
             <p class="section-label">I nostri veicoli</p>
@@ -61,7 +58,6 @@
         </div>
     </section>
 
-    <!-- NOVITÀ (Griglia vuota, riempita dallo script) -->
     <section class="novita" id="novita">
         <div class="section-header">
             <p class="section-label">Blog & Aggiornamenti</p>
@@ -72,7 +68,6 @@
         </div>
     </section>
 
-    <!-- PERCHÉ NOI -->
     <section class="perche">
         <div class="perche__bg"></div>
         <div class="section-header">
@@ -87,7 +82,6 @@
         </div>
     </section>
 
-    <!-- SOCIAL STRIP -->
     <div class="social-strip">
         <span class="social-strip__text">Seguici sui social</span>
         <div class="social-strip__links">
@@ -97,7 +91,6 @@
         </div>
     </div>
 
-    <!-- CONTATTI -->
     <section class="contatti" id="contatti">
         <div class="section-header"><p class="section-label">Parlaci</p><h2 class="section-title">Contatta <em>ExaAuto</em></h2></div>
         <div class="contatti__layout reveal">
@@ -106,7 +99,7 @@
                 <div class="contatti__info-item"><div class="contatti__info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><p class="contatti__info-label">Email</p><a href="mailto:info@exaauto.it" class="contatti__info-value">info@exaauto.it</a></div></div>
                 <div class="contatti__info-item"><div class="contatti__info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div><p class="contatti__info-label">Sito</p><span class="contatti__info-value">exaauto.it</span></div></div>
             </div>
-            <form class="contatti__form" netlify name="contatti-exaauto">
+            <form class="contatti__form" name="contatti-exaauto" method="POST">
                 <div class="form-row"><div class="form-group"><label for="nome">Nome</label><input type="text" id="nome" name="nome" placeholder="Mario Rossi" required></div><div class="form-group"><label for="telefono">Telefono</label><input type="tel" id="telefono" name="telefono" placeholder="+39 333 1234567"></div></div>
                 <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email" placeholder="mario@email.com" required></div>
                 <div class="form-group"><label for="messaggio">Messaggio</label><textarea id="messaggio" name="messaggio" rows="4" placeholder="Sono interessato a..." required></textarea></div>
@@ -115,7 +108,6 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
     <footer class="footer">
         <div class="footer__top">
             <div class="footer__brand"><a href="index.html" class="nav__logo">EXA<span>AUTO</span></a><p>Auto di qualità. Passione per i motori.</p></div>
@@ -128,7 +120,6 @@
         <div class="footer__bottom"><span>© 2026 ExaAuto · exaauto.it · P.IVA da inserire</span><div><a href="#">Privacy Policy</a> · <a href="#">Cookie Policy</a></div></div>
     </footer>
 
-    <!-- SCRIPT DINAMICO CMS -->
     <script>
         // Menu Mobile
         const burger = document.querySelector('.nav__burger'), menu = document.querySelector('.mobile-menu');
@@ -141,14 +132,11 @@
         }, {threshold: 0.15});
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        // Funzione helper per leggere JSON da GitHub
-        async function loadCMSItems(folder) {
+        // Funzione helper aggiornata per leggere file JSON indice su Cloudflare Pages
+        async function loadCMSItems(jsonPath) {
             try {
-                const res = await fetch(folder);
-                const html = await res.text();
-                const doc = new DOMParser().parseFromString(html, 'text/html');
-                const links = Array.from(doc.querySelectorAll('a')).filter(a => a.href.endsWith('.json'));
-                const items = await Promise.all(links.map(async link => (await fetch(link.href)).json()));
+                const res = await fetch(jsonPath);
+                const items = await res.json();
                 return items.sort((a, b) => new Date(b.date) - new Date(a.date));
             } catch(e) { return []; }
         }
@@ -157,7 +145,8 @@
         async function loadCars() {
             const grid = document.getElementById('carsGrid');
             if (!grid) return;
-            const cars = await loadCMSItems('data/cars/');
+            // Carica direttamente dal file di indice JSON compatibile con Cloudflare
+            const cars = await loadCMSItems('data/cars.json');
             
             if(cars.length > 0) {
                 grid.innerHTML = cars.map(car => `
@@ -187,10 +176,10 @@
         async function loadNews() {
             const grid = document.getElementById('newsGrid');
             if (!grid) return;
-            const news = await loadCMSItems('data/news/');
+            // Carica direttamente dal file di indice JSON compatibile con Cloudflare
+            const news = await loadCMSItems('data/news.json');
             
             if(news.length > 0) {
-                // Prendi solo le prime 3 notizie per la homepage
                 const top3 = news.slice(0, 3);
                 grid.innerHTML = top3.map((n, i) => `
                     <article class="news-card ${i === 0 ? 'news-card--big' : ''} reveal">
