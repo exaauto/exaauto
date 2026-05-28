@@ -99,11 +99,12 @@
                 <div class="contatti__info-item"><div class="contatti__info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><p class="contatti__info-label">Email</p><a href="mailto:info@exaauto.it" class="contatti__info-value">info@exaauto.it</a></div></div>
                 <div class="contatti__info-item"><div class="contatti__info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div><p class="contatti__info-label">Sito</p><span class="contatti__info-value">exaauto.it</span></div></div>
             </div>
-            <form class="contatti__form" name="contatti-exaauto" method="POST">
+            <form class="contatti__form" id="contattiForm">
                 <div class="form-row"><div class="form-group"><label for="nome">Nome</label><input type="text" id="nome" name="nome" placeholder="Mario Rossi" required></div><div class="form-group"><label for="telefono">Telefono</label><input type="tel" id="telefono" name="telefono" placeholder="+39 333 1234567"></div></div>
                 <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email" placeholder="mario@email.com" required></div>
                 <div class="form-group"><label for="messaggio">Messaggio</label><textarea id="messaggio" name="messaggio" rows="4" placeholder="Sono interessato a..." required></textarea></div>
-                <button type="submit" class="btn btn--primary">Invia messaggio →</button>
+                <button type="submit" class="btn btn--primary" id="formSubmitBtn">Invia messaggio →</button>
+                <p class="form-feedback" id="formFeedback"></p>
             </form>
         </div>
     </section>
@@ -120,11 +121,70 @@
         <div class="footer__bottom"><span>© 2026 ExaAuto · exaauto.it · P.IVA da inserire</span><div><a href="#">Privacy Policy</a> · <a href="#">Cookie Policy</a></div></div>
     </footer>
 
+    <!-- Modal Articolo News -->
+    <div class="news-modal" id="newsModal" role="dialog" aria-modal="true" aria-labelledby="newsModalTitle">
+        <div class="news-modal__overlay" id="newsModalOverlay"></div>
+        <div class="news-modal__box">
+            <button class="news-modal__close" id="newsModalClose" aria-label="Chiudi">✕</button>
+            <span class="news-modal__tag" id="newsModalTag"></span>
+            <h2 class="news-modal__title" id="newsModalTitle"></h2>
+            <img class="news-modal__img" id="newsModalImg" src="" alt="">
+            <div class="news-modal__body" id="newsModalBody"></div>
+        </div>
+    </div>
+
+    <style>
+        .news-modal { display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center; }
+        .news-modal.open { display:flex; }
+        .news-modal__overlay { position:absolute; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); }
+        .news-modal__box { position:relative; background:var(--bg-card,#1a1a1a); color:var(--text,#fff); border-radius:16px; max-width:720px; width:90%; max-height:85vh; overflow-y:auto; padding:2.5rem 2rem; z-index:1; }
+        .news-modal__close { position:absolute; top:1rem; right:1rem; background:none; border:none; color:var(--text,#fff); font-size:1.4rem; cursor:pointer; opacity:.7; }
+        .news-modal__close:hover { opacity:1; }
+        .news-modal__tag { font-size:.75rem; text-transform:uppercase; letter-spacing:.1em; opacity:.6; }
+        .news-modal__title { font-size:1.6rem; margin:.5rem 0 1rem; }
+        .news-modal__img { width:100%; border-radius:10px; margin-bottom:1.5rem; max-height:280px; object-fit:cover; }
+        .news-modal__body p { margin-bottom:1rem; line-height:1.7; opacity:.85; }
+        .news-modal__body h1,.news-modal__body h2,.news-modal__body h3 { margin:1.5rem 0 .5rem; }
+        .news-modal__body ul,.news-modal__body ol { padding-left:1.5rem; margin-bottom:1rem; }
+        .news-modal__body li { margin-bottom:.4rem; line-height:1.6; opacity:.85; }
+        .news-modal__body strong { color:var(--accent,#e63946); }
+    </style>
+
     <script>
         // Menu Mobile
         const burger = document.querySelector('.nav__burger'), menu = document.querySelector('.mobile-menu');
         burger?.addEventListener('click', () => { menu.classList.toggle('open'); burger.classList.toggle('active'); });
         document.querySelectorAll('.mm-link').forEach(l => l.addEventListener('click', () => { menu.classList.remove('open'); burger.classList.remove('active'); }));
+
+        // Modal News
+        const newsModal = document.getElementById('newsModal');
+        function openNewsModal(n) {
+            document.getElementById('newsModalTag').textContent = n.category;
+            document.getElementById('newsModalTitle').textContent = n.title;
+            document.getElementById('newsModalImg').src = n.image || '';
+            document.getElementById('newsModalImg').alt = n.title;
+            // Converti markdown base in HTML
+            const md = (n.body || n.excerpt || '')
+                .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^- (.+)$/gm, '<li>$1</li>')
+                .replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>')
+                .replace(/(<li>.*<\/li>\n?)+/g, s => `<ul>${s}</ul>`)
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/^(?!<[hul])(.+)$/gm, '<p>$1</p>');
+            document.getElementById('newsModalBody').innerHTML = md;
+            newsModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeNewsModal() {
+            newsModal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.getElementById('newsModalClose').addEventListener('click', closeNewsModal);
+        document.getElementById('newsModalOverlay').addEventListener('click', closeNewsModal);
+        document.addEventListener('keydown', e => { if(e.key === 'Escape') closeNewsModal(); });
 
         // Scroll Reveal
         const revealObserver = new IntersectionObserver(entries => {
@@ -188,7 +248,7 @@
                             <span class="news-card__tag">${n.category}</span>
                             <h3>${n.title}</h3>
                             <p>${n.excerpt}</p>
-                            <a href="#" class="news-card__link">Leggi tutto →</a>
+                            <button class="news-card__link" onclick='openNewsModal(${JSON.stringify(n).replace(/'/g, "&#39;")})'>Leggi tutto →</button>
                         </div>
                     </article>
                 `).join('');
@@ -197,6 +257,45 @@
                 grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted)">Nessuna novità disponibile.</p>';
             }
         }
+
+        // Form Contatti → Cloudflare Worker
+        document.getElementById('contattiForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('formSubmitBtn');
+            const feedback = document.getElementById('formFeedback');
+            btn.disabled = true;
+            btn.textContent = 'Invio in corso...';
+            feedback.className = 'form-feedback';
+            feedback.textContent = '';
+
+            const data = {
+                nome: document.getElementById('nome').value,
+                telefono: document.getElementById('telefono').value,
+                email: document.getElementById('email').value,
+                messaggio: document.getElementById('messaggio').value,
+            };
+
+            try {
+                const res = await fetch('/api/contatti', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    feedback.textContent = '✓ Messaggio inviato! Ti risponderemo presto.';
+                    feedback.classList.add('form-feedback--ok');
+                    e.target.reset();
+                } else {
+                    throw new Error('server');
+                }
+            } catch {
+                feedback.textContent = '✗ Errore nell\'invio. Scrivici direttamente a info@exaauto.it';
+                feedback.classList.add('form-feedback--err');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Invia messaggio →';
+            }
+        });
 
         // Avvia il caricamento
         loadCars();
