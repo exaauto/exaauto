@@ -3,8 +3,501 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ExaAuto CMS</title>
-  <script type="module" src="https://unpkg.com/@sveltia/cms@0.19.2/dist/sveltia-cms.js"></script>
+  <title>ExaAuto Admin</title>
+  <style>
+    :root { --red:#e01e37; --bg:#0a0a0b; --bg2:#111113; --surface:#1c1c1f; --border:rgba(255,255,255,0.08); --text:#f0f0f2; --muted:#7a7a85; --font:'DM Sans',sans-serif; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--bg); color:var(--text); font-family:var(--font); min-height:100vh; }
+    a { color:inherit; text-decoration:none; }
+
+    /* LOGIN */
+    #loginScreen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; gap:24px; }
+    #loginScreen h1 { font-size:2.5rem; letter-spacing:.05em; }
+    #loginScreen h1 span { color:var(--red); }
+    #loginScreen p { color:var(--muted); font-size:.95rem; }
+    .btn { display:inline-flex; align-items:center; gap:10px; padding:14px 28px; border-radius:4px; font-size:15px; font-weight:500; cursor:pointer; border:none; transition:all .2s; font-family:var(--font); }
+    .btn-primary { background:var(--red); color:#fff; }
+    .btn-primary:hover { background:#b5162c; }
+    .btn-ghost { background:transparent; border:1px solid var(--border); color:var(--text); }
+    .btn-ghost:hover { border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.04); }
+    .btn-sm { padding:8px 16px; font-size:13px; }
+    .btn-danger { background:#c0392b; color:#fff; }
+    .btn-danger:hover { background:#a93226; }
+
+    /* LAYOUT */
+    #app { display:none; min-height:100vh; flex-direction:column; }
+    header { background:var(--bg2); border-bottom:1px solid var(--border); padding:0 5%; height:64px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10; }
+    header .logo { font-size:1.6rem; font-weight:700; letter-spacing:.05em; }
+    header .logo span { color:var(--red); }
+    header .user { display:flex; align-items:center; gap:12px; font-size:.9rem; color:var(--muted); }
+    header .user img { width:32px; height:32px; border-radius:50%; }
+
+    main { padding:40px 5%; max-width:1100px; width:100%; margin:0 auto; }
+    .tabs { display:flex; gap:4px; margin-bottom:32px; background:var(--surface); border-radius:6px; padding:4px; width:fit-content; }
+    .tab { padding:10px 24px; border-radius:4px; font-size:14px; font-weight:500; cursor:pointer; color:var(--muted); transition:all .2s; border:none; background:none; font-family:var(--font); }
+    .tab.active { background:var(--red); color:#fff; }
+
+    /* CARDS GRID */
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px; }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+    .card img { width:100%; height:160px; object-fit:cover; }
+    .card-body { padding:18px; }
+    .card-title { font-size:1.1rem; font-weight:600; margin-bottom:6px; }
+    .card-meta { font-size:12px; color:var(--muted); margin-bottom:12px; }
+    .card-actions { display:flex; gap:8px; }
+
+    /* FORM MODAL */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); z-index:100; align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--bg2); border:1px solid var(--border); border-radius:12px; width:90%; max-width:640px; max-height:90vh; overflow-y:auto; padding:32px; position:relative; }
+    .modal h2 { font-size:1.4rem; margin-bottom:24px; }
+    .modal-close { position:absolute; top:16px; right:16px; background:none; border:none; color:var(--muted); font-size:1.4rem; cursor:pointer; }
+    .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:18px; }
+    .form-group label { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .form-group input, .form-group select, .form-group textarea {
+      background:var(--surface); border:1px solid var(--border); border-radius:4px;
+      padding:12px 14px; color:var(--text); font-family:var(--font); font-size:15px; outline:none; transition:border-color .2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--red); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:8px; }
+    .check-row { display:flex; align-items:center; gap:10px; }
+    .check-row input { width:18px; height:18px; accent-color:var(--red); }
+
+    /* IMAGE UPLOAD */
+    .img-preview { width:100%; height:160px; object-fit:cover; border-radius:6px; margin-bottom:8px; display:none; }
+    .img-preview.show { display:block; }
+    .upload-label { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; background:var(--surface); border:1px dashed var(--border); border-radius:4px; cursor:pointer; font-size:13px; color:var(--muted); transition:border-color .2s; }
+    .upload-label:hover { border-color:var(--red); color:var(--text); }
+
+    /* TOAST */
+    #toast { position:fixed; bottom:32px; right:32px; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px 20px; font-size:14px; z-index:999; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; }
+    #toast.show { opacity:1; transform:translateY(0); }
+    #toast.ok { border-color:rgba(76,175,80,.4); color:#4caf50; }
+    #toast.err { border-color:rgba(224,30,55,.4); color:var(--red); }
+
+    .loading { text-align:center; padding:60px; color:var(--muted); }
+    .empty { text-align:center; padding:60px; color:var(--muted); }
+    .tag { display:inline-block; padding:3px 10px; border-radius:3px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
+    .tag-red { background:rgba(224,30,55,.15); color:var(--red); }
+    .tag-gray { background:rgba(255,255,255,.07); color:var(--muted); }
+  </style>
 </head>
-<body></body>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <h1>EXA<span>AUTO</span> Admin</h1>
+  <p>Accedi con il tuo account GitHub per gestire il sito</p>
+  <button class="btn btn-primary" onclick="startLogin()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+    Accedi con GitHub
+  </button>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="logo">EXA<span>AUTO</span> <span style="font-size:.9rem;color:var(--muted);font-weight:400">Admin</span></div>
+    <div class="user">
+      <img id="userAvatar" src="" alt="">
+      <span id="userName"></span>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Esci</button>
+    </div>
+  </header>
+  <main>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('cars')">🚗 Auto in vendita</button>
+      <button class="tab" onclick="switchTab('news')">📰 Novità & Blog</button>
+    </div>
+    <div id="tabContent"><div class="loading">Caricamento...</div></div>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2 id="modalTitle">Nuova auto</h2>
+    <div id="modalForm"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const CLIENT_ID = 'Ov23liS8zF5MXwZAd0nf';
+const REPO = 'exaauto/exaauto';
+const BRANCH = 'main';
+let token = null;
+let currentTab = 'cars';
+let editingIndex = null;
+let carsData = [];
+let newsData = [];
+
+// ─── AUTH ───────────────────────────────────────────────
+function startLogin() {
+  const state = crypto.randomUUID();
+  sessionStorage.setItem('oauth_state', state);
+  const params = new URLSearchParams({ client_id: CLIENT_ID, scope: 'repo', state });
+  window.location.href = `https://github.com/login/oauth/authorize?${params}`;
+}
+
+async function handleCallback() {
+  const params = new URLSearchParams(location.search);
+  const code = params.get('code');
+  const state = params.get('state');
+  if (!code) return false;
+  if (state !== sessionStorage.getItem('oauth_state')) { showToast('Errore di sicurezza OAuth', 'err'); return false; }
+  sessionStorage.removeItem('oauth_state');
+  history.replaceState({}, '', location.pathname);
+  showToast('Autenticazione in corso...', 'ok');
+  // Scambia code con token via Worker Cloudflare
+  try {
+    const res = await fetch('/api/github-oauth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if (data.access_token) {
+      token = data.access_token;
+      sessionStorage.setItem('gh_token', token);
+      return true;
+    }
+  } catch(e) {}
+  showToast('Errore autenticazione', 'err');
+  return false;
+}
+
+function logout() {
+  sessionStorage.removeItem('gh_token');
+  token = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+// ─── GITHUB API ─────────────────────────────────────────
+async function ghGet(path) {
+  const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`, {
+    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
+  });
+  return r.json();
+}
+
+async function ghPut(path, content, sha) {
+  const body = { message: `CMS: aggiorna ${path}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))), branch: BRANCH };
+  if (sha) body.sha = sha;
+  const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+    method: 'PUT',
+    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+async function uploadImage(file, filename) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64 = e.target.result.split(',')[1];
+      const path = `exaauto-cms/images/${filename}`;
+      try {
+        const existing = await ghGet(path);
+        await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+          method: 'PUT',
+          headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: `CMS: upload immagine ${filename}`, content: base64, branch: BRANCH, sha: existing.sha })
+        });
+      } catch {
+        await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+          method: 'PUT',
+          headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: `CMS: upload immagine ${filename}`, content: base64, branch: BRANCH })
+        });
+      }
+      resolve(`/images/${filename}`);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ─── DATA ────────────────────────────────────────────────
+let carsSha = null, newsSha = null;
+
+async function loadData() {
+  const [carsFile, newsFile] = await Promise.all([ghGet('data/cars.json'), ghGet('data/news.json')]);
+  carsSha = carsFile.sha;
+  newsSha = newsFile.sha;
+  carsData = JSON.parse(decodeURIComponent(escape(atob(carsFile.content.replace(/\n/g,'')))));
+  newsData = JSON.parse(decodeURIComponent(escape(atob(newsFile.content.replace(/\n/g,'')))));
+}
+
+async function saveData(type) {
+  const data = type === 'cars' ? carsData : newsData;
+  const path = type === 'cars' ? 'data/cars.json' : 'data/news.json';
+  const sha = type === 'cars' ? carsSha : newsSha;
+  const res = await ghPut(path, data, sha);
+  if (type === 'cars') carsSha = res.content.sha;
+  else newsSha = res.content.sha;
+}
+
+// ─── TABS ────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='cars')||(i===1&&tab==='news')));
+  renderTab();
+}
+
+function renderTab() {
+  const el = document.getElementById('tabContent');
+  if (currentTab === 'cars') renderCars(el);
+  else renderNews(el);
+}
+
+function renderCars(el) {
+  if (!carsData.length) { el.innerHTML = '<div class="empty">Nessuna auto. Aggiungine una!</div>'; }
+  else {
+    el.innerHTML = `
+      <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
+        <button class="btn btn-primary" onclick="openCarModal()">+ Aggiungi auto</button>
+      </div>
+      <div class="grid">
+        ${carsData.map((car, i) => `
+          <div class="card">
+            <img src="${car.image||'https://via.placeholder.com/400x160'}" alt="${car.title}">
+            <div class="card-body">
+              <div style="display:flex;gap:6px;margin-bottom:8px">
+                ${car.featured ? '<span class="tag tag-red">In evidenza</span>' : ''}
+                ${car.badge ? `<span class="tag tag-gray">${car.badge}</span>` : ''}
+              </div>
+              <div class="card-title">${car.title}</div>
+              <div class="card-meta">${car.year} · ${car.km} km · ${car.fuel} · <strong style="color:var(--red)">€ ${Number(car.price).toLocaleString('it-IT')}</strong></div>
+              <div class="card-actions">
+                <button class="btn btn-ghost btn-sm" onclick="openCarModal(${i})">✏️ Modifica</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteCar(${i})">🗑 Elimina</button>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+  }
+  if (!carsData.length) {
+    el.innerHTML += `<div style="display:flex;justify-content:flex-end;margin-top:20px"><button class="btn btn-primary" onclick="openCarModal()">+ Aggiungi auto</button></div>`;
+  }
+}
+
+function renderNews(el) {
+  if (!newsData.length) { el.innerHTML = '<div class="empty">Nessun articolo. Aggiungine uno!</div>'; }
+  else {
+    el.innerHTML = `
+      <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
+        <button class="btn btn-primary" onclick="openNewsModal()">+ Aggiungi articolo</button>
+      </div>
+      <div class="grid">
+        ${newsData.map((n, i) => `
+          <div class="card">
+            <img src="${n.image||'https://via.placeholder.com/400x160'}" alt="${n.title}">
+            <div class="card-body">
+              <span class="tag tag-red" style="margin-bottom:8px;display:inline-block">${n.category}</span>
+              <div class="card-title">${n.title}</div>
+              <div class="card-meta">${new Date(n.date).toLocaleDateString('it-IT')}</div>
+              <div class="card-meta" style="margin-top:4px">${n.excerpt.substring(0,80)}...</div>
+              <div class="card-actions" style="margin-top:12px">
+                <button class="btn btn-ghost btn-sm" onclick="openNewsModal(${i})">✏️ Modifica</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteNews(${i})">🗑 Elimina</button>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+  }
+  if (!newsData.length) {
+    el.innerHTML += `<div style="display:flex;justify-content:flex-end;margin-top:20px"><button class="btn btn-primary" onclick="openNewsModal()">+ Aggiungi articolo</button></div>`;
+  }
+}
+
+// ─── MODALS ──────────────────────────────────────────────
+function openCarModal(index = null) {
+  editingIndex = index;
+  const car = index !== null ? carsData[index] : {};
+  document.getElementById('modalTitle').textContent = index !== null ? 'Modifica auto' : 'Nuova auto';
+  document.getElementById('modalForm').innerHTML = `
+    <div class="form-group">
+      <label>Immagine</label>
+      <img id="imgPreview" class="img-preview ${car.image ? 'show' : ''}" src="${car.image||''}">
+      <label class="upload-label"><input type="file" id="imgFile" accept="image/*" style="display:none" onchange="previewImg(this)">📷 Carica immagine</label>
+      <input type="hidden" id="imgUrl" value="${car.image||''}">
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Titolo</label><input id="f_title" value="${car.title||''}" placeholder="BMW Serie 3 2022"></div>
+      <div class="form-group"><label>Prezzo (€)</label><input id="f_price" type="number" value="${car.price||''}" placeholder="35000"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Anno</label><input id="f_year" type="number" value="${car.year||''}" placeholder="2022"></div>
+      <div class="form-group"><label>Km</label><input id="f_km" value="${car.km||''}" placeholder="15000"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Alimentazione</label>
+        <select id="f_fuel">
+          ${['Benzina','Diesel','Ibrido','Elettrico','Gpl'].map(f=>`<option ${car.fuel===f?'selected':''}>${f}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label>Badge</label><input id="f_badge" value="${car.badge||''}" placeholder="In Stock / Ribassato"></div>
+    </div>
+    <div class="form-group"><label>Descrizione</label><textarea id="f_excerpt" rows="3" placeholder="Descrizione breve...">${car.excerpt||''}</textarea></div>
+    <div class="check-row"><input type="checkbox" id="f_featured" ${car.featured?'checked':''}><label for="f_featured">In evidenza</label></div>
+    <div class="form-actions" style="margin-top:24px">
+      <button class="btn btn-ghost" onclick="closeModal()">Annulla</button>
+      <button class="btn btn-primary" onclick="saveCar()">💾 Salva</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function openNewsModal(index = null) {
+  editingIndex = index;
+  const n = index !== null ? newsData[index] : {};
+  document.getElementById('modalTitle').textContent = index !== null ? 'Modifica articolo' : 'Nuovo articolo';
+  document.getElementById('modalForm').innerHTML = `
+    <div class="form-group">
+      <label>Immagine</label>
+      <img id="imgPreview" class="img-preview ${n.image ? 'show' : ''}" src="${n.image||''}">
+      <label class="upload-label"><input type="file" id="imgFile" accept="image/*" style="display:none" onchange="previewImg(this)">📷 Carica immagine</label>
+      <input type="hidden" id="imgUrl" value="${n.image||''}">
+    </div>
+    <div class="form-group"><label>Titolo</label><input id="f_title" value="${n.title||''}" placeholder="Titolo articolo"></div>
+    <div class="form-group"><label>Categoria</label><input id="f_category" value="${n.category||''}" placeholder="Consigli / Mercato / Manutenzione"></div>
+    <div class="form-group"><label>Anteprima</label><textarea id="f_excerpt" rows="2" placeholder="Breve descrizione...">${n.excerpt||''}</textarea></div>
+    <div class="form-group"><label>Contenuto completo</label><textarea id="f_body" rows="8" placeholder="Testo dell'articolo (supporta Markdown)...">${n.body||''}</textarea></div>
+    <div class="form-actions" style="margin-top:24px">
+      <button class="btn btn-ghost" onclick="closeModal()">Annulla</button>
+      <button class="btn btn-primary" onclick="saveNews()">💾 Salva</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+function previewImg(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById('imgPreview');
+    prev.src = e.target.result; prev.classList.add('show');
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ─── SAVE / DELETE ───────────────────────────────────────
+async function saveCar() {
+  const title = document.getElementById('f_title').value.trim();
+  if (!title) { showToast('Il titolo è obbligatorio', 'err'); return; }
+  showToast('Salvataggio in corso...', 'ok');
+  let imageUrl = document.getElementById('imgUrl').value;
+  const imgFile = document.getElementById('imgFile').files[0];
+  if (imgFile) {
+    const ext = imgFile.name.split('.').pop();
+    const filename = `${title.toLowerCase().replace(/\s+/g,'-')}-${Date.now()}.${ext}`;
+    imageUrl = await uploadImage(imgFile, filename);
+  }
+  const car = {
+    title, price: document.getElementById('f_price').value,
+    year: parseInt(document.getElementById('f_year').value),
+    km: document.getElementById('f_km').value,
+    fuel: document.getElementById('f_fuel').value,
+    image: imageUrl, badge: document.getElementById('f_badge').value,
+    excerpt: document.getElementById('f_excerpt').value,
+    featured: document.getElementById('f_featured').checked,
+    date: editingIndex !== null ? carsData[editingIndex].date : new Date().toISOString()
+  };
+  if (editingIndex !== null) carsData[editingIndex] = car;
+  else carsData.unshift(car);
+  try {
+    await saveData('cars');
+    closeModal(); renderTab(); showToast('Auto salvata ✓', 'ok');
+  } catch(e) { showToast('Errore nel salvataggio', 'err'); }
+}
+
+async function saveNews() {
+  const title = document.getElementById('f_title').value.trim();
+  if (!title) { showToast('Il titolo è obbligatorio', 'err'); return; }
+  showToast('Salvataggio in corso...', 'ok');
+  let imageUrl = document.getElementById('imgUrl').value;
+  const imgFile = document.getElementById('imgFile').files[0];
+  if (imgFile) {
+    const ext = imgFile.name.split('.').pop();
+    const filename = `${title.toLowerCase().replace(/\s+/g,'-')}-${Date.now()}.${ext}`;
+    imageUrl = await uploadImage(imgFile, filename);
+  }
+  const article = {
+    title, category: document.getElementById('f_category').value,
+    image: imageUrl, excerpt: document.getElementById('f_excerpt').value,
+    body: document.getElementById('f_body').value,
+    date: editingIndex !== null ? newsData[editingIndex].date : new Date().toISOString()
+  };
+  if (editingIndex !== null) newsData[editingIndex] = article;
+  else newsData.unshift(article);
+  try {
+    await saveData('news');
+    closeModal(); renderTab(); showToast('Articolo salvato ✓', 'ok');
+  } catch(e) { showToast('Errore nel salvataggio', 'err'); }
+}
+
+async function deleteCar(i) {
+  if (!confirm(`Eliminare "${carsData[i].title}"?`)) return;
+  carsData.splice(i, 1);
+  try { await saveData('cars'); renderTab(); showToast('Auto eliminata', 'ok'); }
+  catch(e) { showToast('Errore', 'err'); }
+}
+
+async function deleteNews(i) {
+  if (!confirm(`Eliminare "${newsData[i].title}"?`)) return;
+  newsData.splice(i, 1);
+  try { await saveData('news'); renderTab(); showToast('Articolo eliminato', 'ok'); }
+  catch(e) { showToast('Errore', 'err'); }
+}
+
+// ─── TOAST ───────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type='ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = '', 3000);
+}
+
+// ─── INIT ────────────────────────────────────────────────
+async function init() {
+  // Controlla callback OAuth
+  if (location.search.includes('code=')) {
+    const ok = await handleCallback();
+    if (!ok) return;
+  } else {
+    token = sessionStorage.getItem('gh_token');
+  }
+
+  if (!token) return;
+
+  // Carica utente
+  const user = await fetch('https://api.github.com/user', {
+    headers: { Authorization: `token ${token}` }
+  }).then(r => r.json());
+
+  if (user.message === 'Bad credentials') {
+    sessionStorage.removeItem('gh_token');
+    return;
+  }
+
+  document.getElementById('userAvatar').src = user.avatar_url;
+  document.getElementById('userName').textContent = user.login;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+
+  await loadData();
+  renderTab();
+}
+
+init();
+</script>
+</body>
 </html>
