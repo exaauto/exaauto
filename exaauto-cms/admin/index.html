@@ -154,7 +154,8 @@ async function handleCallback() {
   showToast('Autenticazione in corso...', 'ok');
   // Scambia code con token via Worker Cloudflare
   try {
-    const res = await fetch('/api/github-oauth', {
+    const res = await fetch('/api/auth/callback
+', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code })
