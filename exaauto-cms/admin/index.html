@@ -154,15 +154,26 @@ function startLogin() {
 }
 
 async function handleCallback() {
+  // Evita doppia esecuzione
+  if (sessionStorage.getItem('oauth_processing')) return false;
+  sessionStorage.setItem('oauth_processing', '1');
+
   const params = new URLSearchParams(location.search);
   const code = params.get('code');
   const state = params.get('state');
-  if (!code) return false;
-  if (state !== sessionStorage.getItem('oauth_state')) { showToast('Errore di sicurezza OAuth', 'err'); return false; }
-  sessionStorage.removeItem('oauth_state');
+
+  // Rimuovi subito il code dall'URL
   history.replaceState({}, '', location.pathname);
+
+  if (!code) { sessionStorage.removeItem('oauth_processing'); return false; }
+  if (state !== sessionStorage.getItem('oauth_state')) {
+    showToast('Errore di sicurezza OAuth', 'err');
+    sessionStorage.removeItem('oauth_processing');
+    return false;
+  }
+  sessionStorage.removeItem('oauth_state');
   showToast('Autenticazione in corso...', 'ok');
-  // Scambia code con token via Worker Cloudflare
+
   try {
     const res = await fetch('/api/github-oauth', {
       method: 'POST',
@@ -170,13 +181,18 @@ async function handleCallback() {
       body: JSON.stringify({ code, password: sessionStorage.getItem('admin_pwd') })
     });
     const data = await res.json();
+    sessionStorage.removeItem('oauth_processing');
     if (data.access_token) {
       token = data.access_token;
       sessionStorage.setItem('gh_token', token);
+      sessionStorage.removeItem('admin_pwd');
       return true;
     }
-  } catch(e) {}
-  showToast('Errore autenticazione', 'err');
+    showToast('Errore: ' + (data.error || 'sconosciuto'), 'err');
+  } catch(e) {
+    sessionStorage.removeItem('oauth_processing');
+    showToast('Errore di connessione: ' + e.message, 'err');
+  }
   return false;
 }
 
