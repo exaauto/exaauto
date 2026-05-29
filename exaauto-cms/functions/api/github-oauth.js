@@ -1,5 +1,5 @@
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': 'https://exaauto.it',
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
@@ -10,7 +10,22 @@ export async function onRequestOptions() {
 
 export async function onRequestPost(context) {
   try {
-    const { code, password } = await context.request.json();
+    let body;
+    try {
+      body = await context.request.json();
+    } catch(e) {
+      return new Response(JSON.stringify({ error: 'Invalid JSON', detail: e.message }), {
+        status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
+      });
+    }
+
+    const { code, password } = body;
+
+    if (!context.env.ADMIN_PASSWORD) {
+      return new Response(JSON.stringify({ error: 'ENV_MISSING', detail: 'ADMIN_PASSWORD not set' }), {
+        status: 500, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
+      });
+    }
 
     if (password !== context.env.ADMIN_PASSWORD) {
       return new Response(JSON.stringify({ error: 'Password errata' }), {
@@ -18,9 +33,11 @@ export async function onRequestPost(context) {
       });
     }
 
-    if (!code) return new Response(JSON.stringify({ error: 'Missing code' }), {
-      status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
-    });
+    if (!code) {
+      return new Response(JSON.stringify({ error: 'Missing code' }), {
+        status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
+      });
+    }
 
     const res = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
@@ -33,8 +50,9 @@ export async function onRequestPost(context) {
     });
 
     const data = await res.json();
+
     if (!data.access_token) {
-      return new Response(JSON.stringify({ error: 'Token non ottenuto' }), {
+      return new Response(JSON.stringify({ error: 'Token non ottenuto', detail: data }), {
         status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
       });
     }
@@ -46,7 +64,7 @@ export async function onRequestPost(context) {
 
     const allowedUsers = (context.env.ALLOWED_GITHUB_USERS || '').split(',').map(u => u.trim());
     if (!allowedUsers.includes(user.login)) {
-      return new Response(JSON.stringify({ error: 'Utente non autorizzato' }), {
+      return new Response(JSON.stringify({ error: 'Utente non autorizzato', login: user.login }), {
         status: 403, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
       });
     }
@@ -56,7 +74,7 @@ export async function onRequestPost(context) {
     });
 
   } catch (e) {
-    return new Response(JSON.stringify({ error: 'Internal error' }), {
+    return new Response(JSON.stringify({ error: 'Internal error', detail: e.message }), {
       status: 500, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
     });
   }
