@@ -14,7 +14,7 @@ export async function onRequestPost(context) {
     try {
       body = await context.request.json();
     } catch(e) {
-      return new Response(JSON.stringify({ error: 'Invalid JSON', detail: e.message }), {
+      return new Response(JSON.stringify({ error: 'Invalid JSON request', detail: e.message }), {
         status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
       });
     }
@@ -49,10 +49,20 @@ export async function onRequestPost(context) {
       })
     });
 
-    const data = await res.json();
+    // Leggi la risposta come testo prima, poi prova a parsare JSON
+    const rawText = await res.text();
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch(e) {
+      // GitHub ha risposto con testo non-JSON (es. codice già usato)
+      return new Response(JSON.stringify({ error: 'GitHub error', detail: rawText }), {
+        status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
+      });
+    }
 
-    if (!data.access_token) {
-      return new Response(JSON.stringify({ error: 'Token non ottenuto', detail: data }), {
+    if (data.error || !data.access_token) {
+      return new Response(JSON.stringify({ error: data.error_description || data.error || 'Token non ottenuto' }), {
         status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
       });
     }
