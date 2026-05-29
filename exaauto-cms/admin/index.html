@@ -154,7 +154,6 @@ function startLogin() {
 }
 
 async function handleCallback() {
-  // Evita doppia esecuzione
   if (sessionStorage.getItem('oauth_processing')) return false;
   sessionStorage.setItem('oauth_processing', '1');
 
@@ -162,7 +161,6 @@ async function handleCallback() {
   const code = params.get('code');
   const state = params.get('state');
 
-  // Rimuovi subito il code dall'URL
   history.replaceState({}, '', location.pathname);
 
   if (!code) { sessionStorage.removeItem('oauth_processing'); return false; }
@@ -175,20 +173,32 @@ async function handleCallback() {
   showToast('Autenticazione in corso...', 'ok');
 
   try {
-    const res = await fetch('/api/github-oauth', {
+    // Usa cors-proxy per scambiare il code con il token
+    const res = await fetch('https://cors.isomorphic-git.org/github.com/login/oauth/access_token', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, password: sessionStorage.getItem('admin_pwd') })
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        client_id: CLIENT_ID,
+        client_secret: 'ea3ce1b878613bbae0159b3984c8d8d37c7291af',
+        code
+      })
     });
     const data = await res.json();
     sessionStorage.removeItem('oauth_processing');
+
     if (data.access_token) {
+      // Verifica password admin
+      const pwd = sessionStorage.getItem('admin_pwd');
+      if (pwd !== 'Z4lunay555@') {
+        showToast('Password errata', 'err');
+        return false;
+      }
       token = data.access_token;
       sessionStorage.setItem('gh_token', token);
       sessionStorage.removeItem('admin_pwd');
       return true;
     }
-    showToast('Errore: ' + (data.error || 'sconosciuto'), 'err');
+    showToast('Errore GitHub: ' + (data.error_description || data.error || 'sconosciuto'), 'err');
   } catch(e) {
     sessionStorage.removeItem('oauth_processing');
     showToast('Errore di connessione: ' + e.message, 'err');
