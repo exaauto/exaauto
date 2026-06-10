@@ -90,14 +90,11 @@
 <!-- LOGIN -->
 <div id="loginScreen">
   <h1>EXA<span>AUTO</span> Admin</h1>
-  <p>Inserisci la password e accedi con GitHub</p>
+  <p>Inserisci la password per accedere</p>
   <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:320px">
     <input type="password" id="adminPassword" placeholder="Password admin" style="background:#1c1c1f;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:14px;color:#f0f0f2;font-size:15px;">
     <p id="loginError" style="color:#e01e37;font-size:13px;min-height:18px;text-align:center"></p>
-    <button class="btn btn-primary" onclick="startLogin()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-1.43-3.795-1.43-.54-1.37-1.32-1.73-1.32-1.73-1.08-.735.084-.72.084-.72 1.185.084 1.81 1.22 1.81 1.22 1.07 1.83 2.81 1.305 3.495.99.108-.775.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.37 1.23-3.21-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.21 0 4.605-2.805 5.625-5.475 5.92.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.285 0 .315.225.69.825.57C20.565 21.795 24 17.31 24 12c0-6.63-5.37-12-12-12"/></svg>
-      Accedi con GitHub
-    </button>
+    <button class="btn btn-primary" onclick="startLogin()">Accedi</button>
   </div>
 </div>
 
@@ -106,8 +103,6 @@
   <header>
     <div class="logo">EXA<span>AUTO</span> <span style="font-size:.9rem;color:var(--muted);font-weight:400">Admin</span></div>
     <div class="user">
-      <img id="userAvatar" src="" alt="">
-      <span id="userName"></span>
       <button class="btn btn-ghost btn-sm" onclick="logout()">Esci</button>
     </div>
   </header>
@@ -132,97 +127,50 @@
 <div id="toast"></div>
 
 <script>
-const CLIENT_ID = 'Ov23liS8zF5MXwZAd0nf';
 const REPO = 'exaauto/exaauto';
 const BRANCH = 'main';
-let token = null;
+const ADMIN_PASSWORD = 'Z4lunay555@';
+
+let token = localStorage.getItem('gh_token') || null;
 let currentTab = 'cars';
 let editingIndex = null;
 let carsData = [];
 let newsData = [];
+let carsSha = null;
+let newsSha = null;
 
 // ─── AUTH ───────────────────────────────────────────────
 function startLogin() {
-  const pwd = document.getElementById('adminPassword')?.value;
+  const pwd = document.getElementById('adminPassword').value;
   if (!pwd) {
     document.getElementById('loginError').textContent = 'Inserisci la password';
     return;
   }
-  const state = crypto.randomUUID();
-  sessionStorage.setItem('oauth_state', state);
-  sessionStorage.setItem('admin_pwd', pwd);
-  const params = new URLSearchParams({ client_id: CLIENT_ID, scope: 'repo', state });
-  window.location.href = `https://github.com/login/oauth/authorize?${params}`;
-}
-
-async function handleCallback() {
-  if (sessionStorage.getItem('oauth_processing')) return false;
-  sessionStorage.setItem('oauth_processing', '1');
-
-  const params = new URLSearchParams(location.search);
-  const code = params.get('code');
-  const state = params.get('state');
-
-  history.replaceState({}, '', location.pathname);
-
-  if (!code) { sessionStorage.removeItem('oauth_processing'); return false; }
-  if (state !== sessionStorage.getItem('oauth_state')) {
-    showToast('Errore di sicurezza OAuth', 'err');
-    sessionStorage.removeItem('oauth_processing');
-    return false;
+  if (pwd !== ADMIN_PASSWORD) {
+    document.getElementById('loginError').textContent = 'Password errata';
+    return;
   }
-  sessionStorage.removeItem('oauth_state');
-  showToast('Autenticazione in corso...', 'ok');
-
-  try {
-    // CORRETTO: Usa un backend serverless o Node.js per scambiare il code
-    // Per ora, usa la flow device-based o token personali in .env
-    // Alternativa: crea un function Netlify/Vercel
-    const tokenExchangeUrl = window.location.origin + '/.netlify/functions/exchange-token';
-    
-    const res = await fetch(tokenExchangeUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code })
-    });
-    
-    const data = await res.json();
-    sessionStorage.removeItem('oauth_processing');
-
-    if (data.access_token) {
-      // Verifica password admin
-      const pwd = sessionStorage.getItem('admin_pwd');
-      if (pwd !== 'Z4lunay555@') {
-        showToast('Password errata', 'err');
-        sessionStorage.removeItem('admin_pwd');
-        return false;
-      }
-      token = data.access_token;
-      // NON persistere il token in sessionStorage per troppo tempo
-      // Preferibilmente usa solo variabile in memoria
-      sessionStorage.removeItem('admin_pwd');
-      return true;
-    }
-    showToast('Errore GitHub: ' + (data.error_description || data.error || 'sconosciuto'), 'err');
-  } catch(e) {
-    sessionStorage.removeItem('oauth_processing');
-    showToast('Errore di connessione: ' + e.message, 'err');
-    console.error('Auth error:', e);
-  }
-  return false;
+  
+  // Login solo con password (senza OAuth)
+  localStorage.setItem('gh_token', 'local_admin_token_' + Date.now());
+  init();
 }
 
 function logout() {
+  localStorage.removeItem('gh_token');
   token = null;
-  sessionStorage.removeItem('gh_token');
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('adminPassword').value = '';
 }
 
 // ─── GITHUB API ─────────────────────────────────────────
 async function ghGet(path) {
   const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`, {
-    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
+    headers: { 
+      'Authorization': 'token ' + 'ghp_HJqwZ7K1mZzZ7K1mZzZ7K1mZzZ7K1mZzZ',
+      'Accept': 'application/vnd.github.v3+json' 
+    }
   });
   if (!r.ok) throw new Error(`GitHub API error: ${r.statusText}`);
   return r.json();
@@ -235,62 +183,34 @@ async function ghPut(path, content, sha) {
     branch: BRANCH 
   };
   if (sha) body.sha = sha;
+  
   const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
     method: 'PUT',
-    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+    headers: { 
+      'Authorization': 'token ' + 'ghp_HJqwZ7K1mZzZ7K1mZzZ7K1mZzZ7K1mZzZ',
+      'Accept': 'application/vnd.github.v3+json', 
+      'Content-Type': 'application/json' 
+    },
     body: JSON.stringify(body)
   });
   if (!r.ok) throw new Error(`GitHub API error: ${r.statusText}`);
   return r.json();
 }
 
-async function uploadImage(file, filename) {
-  return new Promise((resolve, reject) => {
-    if (!file.type.startsWith('image/')) {
-      reject(new Error('Il file deve essere un\'immagine'));
-      return;
-    }
-    
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error('Errore nella lettura del file'));
-    
-    reader.onload = async (e) => {
-      const base64 = e.target.result.split(',')[1];
-      const path = `exaauto-cms/images/${filename}`;
-      try {
-        const existing = await ghGet(path);
-        const result = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
-          method: 'PUT',
-          headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: `CMS: upload immagine ${filename}`, content: base64, branch: BRANCH, sha: existing.sha })
-        });
-        if (!result.ok) throw new Error('Upload failed');
-      } catch {
-        await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
-          method: 'PUT',
-          headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: `CMS: upload immagine ${filename}`, content: base64, branch: BRANCH })
-        });
-      }
-      resolve(`/images/${filename}`);
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
 // ─── DATA ────────────────────────────────────────────────
-let carsSha = null, newsSha = null;
-
 async function loadData() {
   try {
-    const [carsFile, newsFile] = await Promise.all([ghGet('data/cars.json'), ghGet('data/news.json')]);
+    const [carsFile, newsFile] = await Promise.all([
+      ghGet('data/cars.json'), 
+      ghGet('data/news.json')
+    ]);
     carsSha = carsFile.sha;
     newsSha = newsFile.sha;
     carsData = JSON.parse(decodeURIComponent(escape(atob(carsFile.content.replace(/\n/g,'')))));
     newsData = JSON.parse(decodeURIComponent(escape(atob(newsFile.content.replace(/\n/g,'')))));
   } catch(e) {
-    showToast('Errore nel caricamento dei dati: ' + e.message, 'err');
-    console.error('Load data error:', e);
+    showToast('Errore nel caricamento: ' + e.message, 'err');
+    console.error(e);
   }
 }
 
@@ -318,59 +238,49 @@ function renderTab() {
 
 function renderCars(el) {
   const addButton = `<div class="add-btn-container"><button class="btn btn-primary" onclick="openCarModal()">+ Aggiungi auto</button></div>`;
-  
   if (!carsData.length) { 
-    el.innerHTML = addButton + '<div class="empty">Nessuna auto. Aggiungine una!</div>'; 
-  }
-  else {
-    el.innerHTML = addButton + `
-      <div class="grid">
-        ${carsData.map((car, i) => `
-          <div class="card">
-            <img src="${car.image||'https://via.placeholder.com/400x160'}" alt="${car.title}" onerror="this.src='https://via.placeholder.com/400x160'">
-            <div class="card-body">
-              <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
-                ${car.featured ? '<span class="tag tag-red">In evidenza</span>' : ''}
-                ${car.badge ? `<span class="tag tag-gray">${car.badge}</span>` : ''}
-              </div>
-              <div class="card-title">${car.title}</div>
-              <div class="card-meta">${car.year} · ${car.km} km · ${car.fuel} · <strong style="color:var(--red)">€ ${Number(car.price).toLocaleString('it-IT')}</strong></div>
-              <div class="card-actions" style="margin-top:12px">
-                <button class="btn btn-ghost btn-sm" onclick="openCarModal(${i})">✏️ Modifica</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteCar(${i})">🗑 Elimina</button>
-              </div>
-            </div>
+    el.innerHTML = addButton + '<div class="empty">Nessuna auto</div>'; 
+  } else {
+    el.innerHTML = addButton + `<div class="grid">${carsData.map((car, i) => `
+      <div class="card">
+        <img src="${car.image||'https://via.placeholder.com/400x160'}" alt="${car.title}" onerror="this.src='https://via.placeholder.com/400x160'">
+        <div class="card-body">
+          <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+            ${car.featured ? '<span class="tag tag-red">In evidenza</span>' : ''}
+            ${car.badge ? `<span class="tag tag-gray">${car.badge}</span>` : ''}
           </div>
-        `).join('')}
-      </div>`;
+          <div class="card-title">${car.title}</div>
+          <div class="card-meta">${car.year} · ${car.km} km · ${car.fuel} · <strong style="color:var(--red)">€ ${Number(car.price).toLocaleString('it-IT')}</strong></div>
+          <div class="card-actions" style="margin-top:12px">
+            <button class="btn btn-ghost btn-sm" onclick="openCarModal(${i})">✏️ Modifica</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCar(${i})">🗑 Elimina</button>
+          </div>
+        </div>
+      </div>
+    `).join('')}</div>`;
   }
 }
 
 function renderNews(el) {
   const addButton = `<div class="add-btn-container"><button class="btn btn-primary" onclick="openNewsModal()">+ Aggiungi articolo</button></div>`;
-  
   if (!newsData.length) { 
-    el.innerHTML = addButton + '<div class="empty">Nessun articolo. Aggiungine uno!</div>'; 
-  }
-  else {
-    el.innerHTML = addButton + `
-      <div class="grid">
-        ${newsData.map((n, i) => `
-          <div class="card">
-            <img src="${n.image||'https://via.placeholder.com/400x160'}" alt="${n.title}" onerror="this.src='https://via.placeholder.com/400x160'">
-            <div class="card-body">
-              <span class="tag tag-red" style="margin-bottom:8px;display:inline-block">${n.category}</span>
-              <div class="card-title">${n.title}</div>
-              <div class="card-meta">${n.date ? new Date(n.date).toLocaleDateString('it-IT') : 'N/A'}</div>
-              <div class="card-meta" style="margin-top:4px">${(n.excerpt||'').substring(0,80)}...</div>
-              <div class="card-actions" style="margin-top:12px">
-                <button class="btn btn-ghost btn-sm" onclick="openNewsModal(${i})">✏️ Modifica</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteNews(${i})">🗑 Elimina</button>
-              </div>
-            </div>
+    el.innerHTML = addButton + '<div class="empty">Nessun articolo</div>'; 
+  } else {
+    el.innerHTML = addButton + `<div class="grid">${newsData.map((n, i) => `
+      <div class="card">
+        <img src="${n.image||'https://via.placeholder.com/400x160'}" alt="${n.title}" onerror="this.src='https://via.placeholder.com/400x160'">
+        <div class="card-body">
+          <span class="tag tag-red" style="margin-bottom:8px;display:inline-block">${n.category}</span>
+          <div class="card-title">${n.title}</div>
+          <div class="card-meta">${new Date(n.date).toLocaleDateString('it-IT')}</div>
+          <div class="card-meta" style="margin-top:4px">${(n.excerpt||'').substring(0,80)}...</div>
+          <div class="card-actions" style="margin-top:12px">
+            <button class="btn btn-ghost btn-sm" onclick="openNewsModal(${i})">✏️ Modifica</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteNews(${i})">🗑 Elimina</button>
           </div>
-        `).join('')}
-      </div>`;
+        </div>
+      </div>
+    `).join('')}</div>`;
   }
 }
 
@@ -380,19 +290,13 @@ function openCarModal(index = null) {
   const car = index !== null ? carsData[index] : {};
   document.getElementById('modalTitle').textContent = index !== null ? 'Modifica auto' : 'Nuova auto';
   document.getElementById('modalForm').innerHTML = `
-    <div class="form-group">
-      <label>Immagine</label>
-      <img id="imgPreview" class="img-preview ${car.image ? 'show' : ''}" src="${car.image||''}">
-      <label class="upload-label"><input type="file" id="imgFile" accept="image/*" style="display:none" onchange="previewImg(this)">📷 Carica immagine</label>
-      <input type="hidden" id="imgUrl" value="${car.image||''}">
+    <div class="form-row">
+      <div class="form-group"><label>Titolo</label><input id="f_title" value="${car.title||''}" required></div>
+      <div class="form-group"><label>Prezzo (€)</label><input id="f_price" type="number" value="${car.price||''}" min="0" required></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>Titolo</label><input id="f_title" value="${car.title||''}" placeholder="BMW Serie 3 2022" required></div>
-      <div class="form-group"><label>Prezzo (€)</label><input id="f_price" type="number" value="${car.price||''}" placeholder="35000" min="0" required></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Anno</label><input id="f_year" type="number" value="${car.year||''}" placeholder="2022" min="1900" max="${new Date().getFullYear() + 1}" required></div>
-      <div class="form-group"><label>Km</label><input id="f_km" value="${car.km||''}" placeholder="15000" required></div>
+      <div class="form-group"><label>Anno</label><input id="f_year" type="number" value="${car.year||''}" required></div>
+      <div class="form-group"><label>Km</label><input id="f_km" value="${car.km||''}" required></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label>Alimentazione</label>
@@ -401,9 +305,10 @@ function openCarModal(index = null) {
           ${['Benzina','Diesel','Ibrido','Elettrico','Gpl'].map(f=>`<option ${car.fuel===f?'selected':''}>${f}</option>`).join('')}
         </select>
       </div>
-      <div class="form-group"><label>Badge</label><input id="f_badge" value="${car.badge||''}" placeholder="In Stock / Ribassato"></div>
+      <div class="form-group"><label>Badge</label><input id="f_badge" value="${car.badge||''}"></div>
     </div>
-    <div class="form-group"><label>Descrizione</label><textarea id="f_excerpt" rows="3" placeholder="Descrizione breve...">${car.excerpt||''}</textarea></div>
+    <div class="form-group"><label>Immagine URL</label><input id="f_image" value="${car.image||''}"></div>
+    <div class="form-group"><label>Descrizione</label><textarea id="f_excerpt" rows="3">${car.excerpt||''}</textarea></div>
     <div class="check-row"><input type="checkbox" id="f_featured" ${car.featured?'checked':''}><label for="f_featured">In evidenza</label></div>
     <div class="form-actions" style="margin-top:24px">
       <button class="btn btn-ghost" onclick="closeModal()">Annulla</button>
@@ -417,16 +322,11 @@ function openNewsModal(index = null) {
   const n = index !== null ? newsData[index] : {};
   document.getElementById('modalTitle').textContent = index !== null ? 'Modifica articolo' : 'Nuovo articolo';
   document.getElementById('modalForm').innerHTML = `
-    <div class="form-group">
-      <label>Immagine</label>
-      <img id="imgPreview" class="img-preview ${n.image ? 'show' : ''}" src="${n.image||''}">
-      <label class="upload-label"><input type="file" id="imgFile" accept="image/*" style="display:none" onchange="previewImg(this)">📷 Carica immagine</label>
-      <input type="hidden" id="imgUrl" value="${n.image||''}">
-    </div>
-    <div class="form-group"><label>Titolo</label><input id="f_title" value="${n.title||''}" placeholder="Titolo articolo" required></div>
-    <div class="form-group"><label>Categoria</label><input id="f_category" value="${n.category||''}" placeholder="Consigli / Mercato / Manutenzione" required></div>
-    <div class="form-group"><label>Anteprima</label><textarea id="f_excerpt" rows="2" placeholder="Breve descrizione..." required>${n.excerpt||''}</textarea></div>
-    <div class="form-group"><label>Contenuto completo</label><textarea id="f_body" rows="8" placeholder="Testo dell'articolo (supporta Markdown)..." required>${n.body||''}</textarea></div>
+    <div class="form-group"><label>Titolo</label><input id="f_title" value="${n.title||''}" required></div>
+    <div class="form-group"><label>Categoria</label><input id="f_category" value="${n.category||''}" required></div>
+    <div class="form-group"><label>Immagine URL</label><input id="f_image" value="${n.image||''}"></div>
+    <div class="form-group"><label>Anteprima</label><textarea id="f_excerpt" rows="2" required>${n.excerpt||''}</textarea></div>
+    <div class="form-group"><label>Contenuto</label><textarea id="f_body" rows="8" required>${n.body||''}</textarea></div>
     <div class="form-group"><label>Data</label><input id="f_date" type="date" value="${n.date ? new Date(n.date).toISOString().split('T')[0] : ''}" required></div>
     <div class="form-actions" style="margin-top:24px">
       <button class="btn btn-ghost" onclick="closeModal()">Annulla</button>
@@ -437,16 +337,6 @@ function openNewsModal(index = null) {
 
 function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
 
-function previewImg(input) {
-  if (!input.files[0]) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const prev = document.getElementById('imgPreview');
-    prev.src = e.target.result; prev.classList.add('show');
-  };
-  reader.readAsDataURL(input.files[0]);
-}
-
 // ─── SAVE / DELETE ───────────────────────────────────────
 async function saveCar() {
   const title = document.getElementById('f_title').value.trim();
@@ -454,44 +344,26 @@ async function saveCar() {
   const year = document.getElementById('f_year').value.trim();
   const fuel = document.getElementById('f_fuel').value.trim();
   const km = document.getElementById('f_km').value.trim();
+  const image = document.getElementById('f_image').value.trim();
   
-  // Validazione
-  if (!title) { showToast('Il titolo è obbligatorio', 'err'); return; }
-  if (!price || isNaN(price) || price < 0) { showToast('Inserisci un prezzo valido', 'err'); return; }
-  if (!year || isNaN(year) || year < 1900) { showToast('Inserisci un anno valido', 'err'); return; }
-  if (!fuel) { showToast('Seleziona un\'alimentazione', 'err'); return; }
-  if (!km) { showToast('Inserisci i km', 'err'); return; }
+  if (!title || !price || !year || !fuel || !km) { showToast('Compila tutti i campi obbligatori', 'err'); return; }
   
-  showToast('Salvataggio in corso...', 'ok');
-  let imageUrl = document.getElementById('imgUrl').value;
-  const imgFile = document.getElementById('imgFile').files[0];
+  showToast('Salvataggio...', 'ok');
+  const car = {
+    title, price: parseFloat(price), year: parseInt(year), km, fuel,
+    image: image || 'https://via.placeholder.com/400x160',
+    badge: document.getElementById('f_badge').value,
+    excerpt: document.getElementById('f_excerpt').value,
+    featured: document.getElementById('f_featured').checked,
+    date: editingIndex !== null ? carsData[editingIndex].date : new Date().toISOString()
+  };
   
   try {
-    if (imgFile) {
-      const ext = imgFile.name.split('.').pop();
-      const filename = `${title.toLowerCase().replace(/\s+/g,'-')}-${Date.now()}.${ext}`;
-      imageUrl = await uploadImage(imgFile, filename);
-    }
-    
-    const car = {
-      title, price: parseFloat(price),
-      year: parseInt(year),
-      km, fuel, image: imageUrl, 
-      badge: document.getElementById('f_badge').value,
-      excerpt: document.getElementById('f_excerpt').value,
-      featured: document.getElementById('f_featured').checked,
-      date: editingIndex !== null ? carsData[editingIndex].date : new Date().toISOString()
-    };
-    
     if (editingIndex !== null) carsData[editingIndex] = car;
     else carsData.unshift(car);
-    
     await saveData('cars');
     closeModal(); renderTab(); showToast('Auto salvata ✓', 'ok');
-  } catch(e) { 
-    showToast('Errore nel salvataggio: ' + e.message, 'err'); 
-    console.error('Save car error:', e);
-  }
+  } catch(e) { showToast('Errore: ' + e.message, 'err'); }
 }
 
 async function saveNews() {
@@ -500,53 +372,37 @@ async function saveNews() {
   const excerpt = document.getElementById('f_excerpt').value.trim();
   const body = document.getElementById('f_body').value.trim();
   const date = document.getElementById('f_date').value;
+  const image = document.getElementById('f_image').value.trim();
   
-  // Validazione
-  if (!title) { showToast('Il titolo è obbligatorio', 'err'); return; }
-  if (!category) { showToast('La categoria è obbligatoria', 'err'); return; }
-  if (!excerpt) { showToast('L\'anteprima è obbligatoria', 'err'); return; }
-  if (!body) { showToast('Il contenuto è obbligatorio', 'err'); return; }
-  if (!date) { showToast('La data è obbligatoria', 'err'); return; }
+  if (!title || !category || !excerpt || !body || !date) { showToast('Compila tutti i campi', 'err'); return; }
   
-  showToast('Salvataggio in corso...', 'ok');
-  let imageUrl = document.getElementById('imgUrl').value;
-  const imgFile = document.getElementById('imgFile').files[0];
+  showToast('Salvataggio...', 'ok');
+  const article = {
+    title, category, excerpt, body,
+    image: image || 'https://via.placeholder.com/400x160',
+    date: new Date(date + 'T00:00:00Z').toISOString()
+  };
   
   try {
-    if (imgFile) {
-      const ext = imgFile.name.split('.').pop();
-      const filename = `${title.toLowerCase().replace(/\s+/g,'-')}-${Date.now()}.${ext}`;
-      imageUrl = await uploadImage(imgFile, filename);
-    }
-    
-    const article = {
-      title, category, image: imageUrl, excerpt, body,
-      date: new Date(date + 'T00:00:00Z').toISOString()
-    };
-    
     if (editingIndex !== null) newsData[editingIndex] = article;
     else newsData.unshift(article);
-    
     await saveData('news');
     closeModal(); renderTab(); showToast('Articolo salvato ✓', 'ok');
-  } catch(e) { 
-    showToast('Errore nel salvataggio: ' + e.message, 'err');
-    console.error('Save news error:', e);
-  }
+  } catch(e) { showToast('Errore: ' + e.message, 'err'); }
 }
 
 async function deleteCar(i) {
   if (!confirm(`Eliminare "${carsData[i].title}"?`)) return;
   carsData.splice(i, 1);
   try { await saveData('cars'); renderTab(); showToast('Auto eliminata', 'ok'); }
-  catch(e) { showToast('Errore: ' + e.message, 'err'); console.error(e); }
+  catch(e) { showToast('Errore', 'err'); }
 }
 
 async function deleteNews(i) {
   if (!confirm(`Eliminare "${newsData[i].title}"?`)) return;
   newsData.splice(i, 1);
   try { await saveData('news'); renderTab(); showToast('Articolo eliminato', 'ok'); }
-  catch(e) { showToast('Errore: ' + e.message, 'err'); console.error(e); }
+  catch(e) { showToast('Errore', 'err'); }
 }
 
 // ─── TOAST ───────────────────────────────────────────────
@@ -560,43 +416,18 @@ function showToast(msg, type='ok') {
 
 // ─── INIT ────────────────────────────────────────────────
 async function init() {
-  // Controlla callback OAuth
-  if (location.search.includes('code=')) {
-    const ok = await handleCallback();
-    if (!ok) return;
-  } else {
-    token = sessionStorage.getItem('gh_token');
-  }
-
   if (!token) return;
-
-  try {
-    // Carica utente
-    const user = await fetch('https://api.github.com/user', {
-      headers: { Authorization: `token ${token}` }
-    }).then(r => r.json());
-
-    if (user.message === 'Bad credentials') {
-      sessionStorage.removeItem('gh_token');
-      showToast('Token scaduto, effettua il login di nuovo', 'err');
-      return;
-    }
-
-    document.getElementById('userAvatar').src = user.avatar_url;
-    document.getElementById('userName').textContent = user.login;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
-
-    await loadData();
-    renderTab();
-  } catch(e) {
-    showToast('Errore durante l\'inizializzazione: ' + e.message, 'err');
-    console.error('Init error:', e);
-  }
+  
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  
+  await loadData();
+  renderTab();
 }
 
-// Avvia l'app
-init();
+// Controlla se già loggato
+if (token) init();
 </script>
+
 </body>
 </html>
