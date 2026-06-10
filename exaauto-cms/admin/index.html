@@ -26,7 +26,7 @@
 
     /* LAYOUT */
     #app { display:none; min-height:100vh; flex-direction:column; }
-    header { background:var(--bg2); border-bottom:1px solid var(--border); padding:0 5%; height:64px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10; }
+    header { background:var(--bg2); border-bottom:1px solid var(--border); padding:0 5%; height:64px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
     header .logo { font-size:1.6rem; font-weight:700; letter-spacing:.05em; }
     header .logo span { color:var(--red); }
     header .user { display:flex; align-items:center; gap:12px; font-size:.9rem; color:var(--muted); }
@@ -67,11 +67,11 @@
     /* IMAGE UPLOAD */
     .img-preview { width:100%; height:160px; object-fit:cover; border-radius:6px; margin-bottom:8px; display:none; }
     .img-preview.show { display:block; }
-    .upload-label { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; background:var(--surface); border:1px dashed var(--border); border-radius:4px; cursor:pointer; font-size:13px; color:var(--muted); transition:border-color .2s; }
+    .upload-label { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; background:var(--surface); border:1px dashed var(--border); border-radius:4px; cursor:pointer; font-size:13px; }
     .upload-label:hover { border-color:var(--red); color:var(--text); }
 
     /* TOAST */
-    #toast { position:fixed; bottom:32px; right:32px; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px 20px; font-size:14px; z-index:999; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; }
+    #toast { position:fixed; bottom:32px; right:32px; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px 20px; font-size:14px; z-index:999; opacity:0; transform:translateY(100px); transition:all .3s; }
     #toast.show { opacity:1; transform:translateY(0); }
     #toast.ok { border-color:rgba(76,175,80,.4); color:#4caf50; }
     #toast.err { border-color:rgba(224,30,55,.4); color:var(--red); }
@@ -81,6 +81,8 @@
     .tag { display:inline-block; padding:3px 10px; border-radius:3px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
     .tag-red { background:rgba(224,30,55,.15); color:var(--red); }
     .tag-gray { background:rgba(255,255,255,.07); color:var(--muted); }
+    
+    .add-btn-container { display:flex; justify-content:flex-end; margin-bottom:20px; }
   </style>
 </head>
 <body>
@@ -90,10 +92,10 @@
   <h1>EXA<span>AUTO</span> Admin</h1>
   <p>Inserisci la password e accedi con GitHub</p>
   <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:320px">
-    <input type="password" id="adminPassword" placeholder="Password admin" style="background:#1c1c1f;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:14px;color:#f0f0f2;font-size:15px;outline:none;font-family:inherit" onkeydown="if(event.key==='Enter')startLogin()">
+    <input type="password" id="adminPassword" placeholder="Password admin" style="background:#1c1c1f;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:14px;color:#f0f0f2;font-size:15px;">
     <p id="loginError" style="color:#e01e37;font-size:13px;min-height:18px;text-align:center"></p>
     <button class="btn btn-primary" onclick="startLogin()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-1.43-3.795-1.43-.54-1.37-1.32-1.73-1.32-1.73-1.08-.735.084-.72.084-.72 1.185.084 1.81 1.22 1.81 1.22 1.07 1.83 2.81 1.305 3.495.99.108-.775.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.37 1.23-3.21-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.21 0 4.605-2.805 5.625-5.475 5.92.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.285 0 .315.225.69.825.57C20.565 21.795 24 17.31 24 12c0-6.63-5.37-12-12-12"/></svg>
       Accedi con GitHub
     </button>
   </div>
@@ -173,16 +175,17 @@ async function handleCallback() {
   showToast('Autenticazione in corso...', 'ok');
 
   try {
-    // Usa cors-proxy per scambiare il code con il token
-    const res = await fetch('https://cors.isomorphic-git.org/github.com/login/oauth/access_token', {
+    // CORRETTO: Usa un backend serverless o Node.js per scambiare il code
+    // Per ora, usa la flow device-based o token personali in .env
+    // Alternativa: crea un function Netlify/Vercel
+    const tokenExchangeUrl = window.location.origin + '/.netlify/functions/exchange-token';
+    
+    const res = await fetch(tokenExchangeUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        client_id: CLIENT_ID,
-        client_secret: 'ea3ce1b878613bbae0159b3984c8d8d37c7291af',
-        code
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
     });
+    
     const data = await res.json();
     sessionStorage.removeItem('oauth_processing');
 
@@ -191,10 +194,12 @@ async function handleCallback() {
       const pwd = sessionStorage.getItem('admin_pwd');
       if (pwd !== 'Z4lunay555@') {
         showToast('Password errata', 'err');
+        sessionStorage.removeItem('admin_pwd');
         return false;
       }
       token = data.access_token;
-      sessionStorage.setItem('gh_token', token);
+      // NON persistere il token in sessionStorage per troppo tempo
+      // Preferibilmente usa solo variabile in memoria
       sessionStorage.removeItem('admin_pwd');
       return true;
     }
@@ -202,13 +207,14 @@ async function handleCallback() {
   } catch(e) {
     sessionStorage.removeItem('oauth_processing');
     showToast('Errore di connessione: ' + e.message, 'err');
+    console.error('Auth error:', e);
   }
   return false;
 }
 
 function logout() {
-  sessionStorage.removeItem('gh_token');
   token = null;
+  sessionStorage.removeItem('gh_token');
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
 }
@@ -218,33 +224,47 @@ async function ghGet(path) {
   const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`, {
     headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
   });
+  if (!r.ok) throw new Error(`GitHub API error: ${r.statusText}`);
   return r.json();
 }
 
 async function ghPut(path, content, sha) {
-  const body = { message: `CMS: aggiorna ${path}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))), branch: BRANCH };
+  const body = { 
+    message: `CMS: aggiorna ${path}`, 
+    content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))), 
+    branch: BRANCH 
+  };
   if (sha) body.sha = sha;
   const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
     method: 'PUT',
     headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
+  if (!r.ok) throw new Error(`GitHub API error: ${r.statusText}`);
   return r.json();
 }
 
 async function uploadImage(file, filename) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      reject(new Error('Il file deve essere un\'immagine'));
+      return;
+    }
+    
     const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Errore nella lettura del file'));
+    
     reader.onload = async (e) => {
       const base64 = e.target.result.split(',')[1];
       const path = `exaauto-cms/images/${filename}`;
       try {
         const existing = await ghGet(path);
-        await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+        const result = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
           method: 'PUT',
           headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: `CMS: upload immagine ${filename}`, content: base64, branch: BRANCH, sha: existing.sha })
         });
+        if (!result.ok) throw new Error('Upload failed');
       } catch {
         await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
           method: 'PUT',
@@ -262,11 +282,16 @@ async function uploadImage(file, filename) {
 let carsSha = null, newsSha = null;
 
 async function loadData() {
-  const [carsFile, newsFile] = await Promise.all([ghGet('data/cars.json'), ghGet('data/news.json')]);
-  carsSha = carsFile.sha;
-  newsSha = newsFile.sha;
-  carsData = JSON.parse(decodeURIComponent(escape(atob(carsFile.content.replace(/\n/g,'')))));
-  newsData = JSON.parse(decodeURIComponent(escape(atob(newsFile.content.replace(/\n/g,'')))));
+  try {
+    const [carsFile, newsFile] = await Promise.all([ghGet('data/cars.json'), ghGet('data/news.json')]);
+    carsSha = carsFile.sha;
+    newsSha = newsFile.sha;
+    carsData = JSON.parse(decodeURIComponent(escape(atob(carsFile.content.replace(/\n/g,'')))));
+    newsData = JSON.parse(decodeURIComponent(escape(atob(newsFile.content.replace(/\n/g,'')))));
+  } catch(e) {
+    showToast('Errore nel caricamento dei dati: ' + e.message, 'err');
+    console.error('Load data error:', e);
+  }
 }
 
 async function saveData(type) {
@@ -292,24 +317,25 @@ function renderTab() {
 }
 
 function renderCars(el) {
-  if (!carsData.length) { el.innerHTML = '<div class="empty">Nessuna auto. Aggiungine una!</div>'; }
+  const addButton = `<div class="add-btn-container"><button class="btn btn-primary" onclick="openCarModal()">+ Aggiungi auto</button></div>`;
+  
+  if (!carsData.length) { 
+    el.innerHTML = addButton + '<div class="empty">Nessuna auto. Aggiungine una!</div>'; 
+  }
   else {
-    el.innerHTML = `
-      <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
-        <button class="btn btn-primary" onclick="openCarModal()">+ Aggiungi auto</button>
-      </div>
+    el.innerHTML = addButton + `
       <div class="grid">
         ${carsData.map((car, i) => `
           <div class="card">
-            <img src="${car.image||'https://via.placeholder.com/400x160'}" alt="${car.title}">
+            <img src="${car.image||'https://via.placeholder.com/400x160'}" alt="${car.title}" onerror="this.src='https://via.placeholder.com/400x160'">
             <div class="card-body">
-              <div style="display:flex;gap:6px;margin-bottom:8px">
+              <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
                 ${car.featured ? '<span class="tag tag-red">In evidenza</span>' : ''}
                 ${car.badge ? `<span class="tag tag-gray">${car.badge}</span>` : ''}
               </div>
               <div class="card-title">${car.title}</div>
               <div class="card-meta">${car.year} · ${car.km} km · ${car.fuel} · <strong style="color:var(--red)">€ ${Number(car.price).toLocaleString('it-IT')}</strong></div>
-              <div class="card-actions">
+              <div class="card-actions" style="margin-top:12px">
                 <button class="btn btn-ghost btn-sm" onclick="openCarModal(${i})">✏️ Modifica</button>
                 <button class="btn btn-danger btn-sm" onclick="deleteCar(${i})">🗑 Elimina</button>
               </div>
@@ -318,27 +344,25 @@ function renderCars(el) {
         `).join('')}
       </div>`;
   }
-  if (!carsData.length) {
-    el.innerHTML += `<div style="display:flex;justify-content:flex-end;margin-top:20px"><button class="btn btn-primary" onclick="openCarModal()">+ Aggiungi auto</button></div>`;
-  }
 }
 
 function renderNews(el) {
-  if (!newsData.length) { el.innerHTML = '<div class="empty">Nessun articolo. Aggiungine uno!</div>'; }
+  const addButton = `<div class="add-btn-container"><button class="btn btn-primary" onclick="openNewsModal()">+ Aggiungi articolo</button></div>`;
+  
+  if (!newsData.length) { 
+    el.innerHTML = addButton + '<div class="empty">Nessun articolo. Aggiungine uno!</div>'; 
+  }
   else {
-    el.innerHTML = `
-      <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
-        <button class="btn btn-primary" onclick="openNewsModal()">+ Aggiungi articolo</button>
-      </div>
+    el.innerHTML = addButton + `
       <div class="grid">
         ${newsData.map((n, i) => `
           <div class="card">
-            <img src="${n.image||'https://via.placeholder.com/400x160'}" alt="${n.title}">
+            <img src="${n.image||'https://via.placeholder.com/400x160'}" alt="${n.title}" onerror="this.src='https://via.placeholder.com/400x160'">
             <div class="card-body">
               <span class="tag tag-red" style="margin-bottom:8px;display:inline-block">${n.category}</span>
               <div class="card-title">${n.title}</div>
-              <div class="card-meta">${new Date(n.date).toLocaleDateString('it-IT')}</div>
-              <div class="card-meta" style="margin-top:4px">${n.excerpt.substring(0,80)}...</div>
+              <div class="card-meta">${n.date ? new Date(n.date).toLocaleDateString('it-IT') : 'N/A'}</div>
+              <div class="card-meta" style="margin-top:4px">${(n.excerpt||'').substring(0,80)}...</div>
               <div class="card-actions" style="margin-top:12px">
                 <button class="btn btn-ghost btn-sm" onclick="openNewsModal(${i})">✏️ Modifica</button>
                 <button class="btn btn-danger btn-sm" onclick="deleteNews(${i})">🗑 Elimina</button>
@@ -347,9 +371,6 @@ function renderNews(el) {
           </div>
         `).join('')}
       </div>`;
-  }
-  if (!newsData.length) {
-    el.innerHTML += `<div style="display:flex;justify-content:flex-end;margin-top:20px"><button class="btn btn-primary" onclick="openNewsModal()">+ Aggiungi articolo</button></div>`;
   }
 }
 
@@ -366,16 +387,17 @@ function openCarModal(index = null) {
       <input type="hidden" id="imgUrl" value="${car.image||''}">
     </div>
     <div class="form-row">
-      <div class="form-group"><label>Titolo</label><input id="f_title" value="${car.title||''}" placeholder="BMW Serie 3 2022"></div>
-      <div class="form-group"><label>Prezzo (€)</label><input id="f_price" type="number" value="${car.price||''}" placeholder="35000"></div>
+      <div class="form-group"><label>Titolo</label><input id="f_title" value="${car.title||''}" placeholder="BMW Serie 3 2022" required></div>
+      <div class="form-group"><label>Prezzo (€)</label><input id="f_price" type="number" value="${car.price||''}" placeholder="35000" min="0" required></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>Anno</label><input id="f_year" type="number" value="${car.year||''}" placeholder="2022"></div>
-      <div class="form-group"><label>Km</label><input id="f_km" value="${car.km||''}" placeholder="15000"></div>
+      <div class="form-group"><label>Anno</label><input id="f_year" type="number" value="${car.year||''}" placeholder="2022" min="1900" max="${new Date().getFullYear() + 1}" required></div>
+      <div class="form-group"><label>Km</label><input id="f_km" value="${car.km||''}" placeholder="15000" required></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label>Alimentazione</label>
-        <select id="f_fuel">
+        <select id="f_fuel" required>
+          <option value="">Seleziona...</option>
           ${['Benzina','Diesel','Ibrido','Elettrico','Gpl'].map(f=>`<option ${car.fuel===f?'selected':''}>${f}</option>`).join('')}
         </select>
       </div>
@@ -401,10 +423,11 @@ function openNewsModal(index = null) {
       <label class="upload-label"><input type="file" id="imgFile" accept="image/*" style="display:none" onchange="previewImg(this)">📷 Carica immagine</label>
       <input type="hidden" id="imgUrl" value="${n.image||''}">
     </div>
-    <div class="form-group"><label>Titolo</label><input id="f_title" value="${n.title||''}" placeholder="Titolo articolo"></div>
-    <div class="form-group"><label>Categoria</label><input id="f_category" value="${n.category||''}" placeholder="Consigli / Mercato / Manutenzione"></div>
-    <div class="form-group"><label>Anteprima</label><textarea id="f_excerpt" rows="2" placeholder="Breve descrizione...">${n.excerpt||''}</textarea></div>
-    <div class="form-group"><label>Contenuto completo</label><textarea id="f_body" rows="8" placeholder="Testo dell'articolo (supporta Markdown)...">${n.body||''}</textarea></div>
+    <div class="form-group"><label>Titolo</label><input id="f_title" value="${n.title||''}" placeholder="Titolo articolo" required></div>
+    <div class="form-group"><label>Categoria</label><input id="f_category" value="${n.category||''}" placeholder="Consigli / Mercato / Manutenzione" required></div>
+    <div class="form-group"><label>Anteprima</label><textarea id="f_excerpt" rows="2" placeholder="Breve descrizione..." required>${n.excerpt||''}</textarea></div>
+    <div class="form-group"><label>Contenuto completo</label><textarea id="f_body" rows="8" placeholder="Testo dell'articolo (supporta Markdown)..." required>${n.body||''}</textarea></div>
+    <div class="form-group"><label>Data</label><input id="f_date" type="date" value="${n.date ? new Date(n.date).toISOString().split('T')[0] : ''}" required></div>
     <div class="form-actions" style="margin-top:24px">
       <button class="btn btn-ghost" onclick="closeModal()">Annulla</button>
       <button class="btn btn-primary" onclick="saveNews()">💾 Salva</button>
@@ -427,70 +450,103 @@ function previewImg(input) {
 // ─── SAVE / DELETE ───────────────────────────────────────
 async function saveCar() {
   const title = document.getElementById('f_title').value.trim();
+  const price = document.getElementById('f_price').value.trim();
+  const year = document.getElementById('f_year').value.trim();
+  const fuel = document.getElementById('f_fuel').value.trim();
+  const km = document.getElementById('f_km').value.trim();
+  
+  // Validazione
   if (!title) { showToast('Il titolo è obbligatorio', 'err'); return; }
+  if (!price || isNaN(price) || price < 0) { showToast('Inserisci un prezzo valido', 'err'); return; }
+  if (!year || isNaN(year) || year < 1900) { showToast('Inserisci un anno valido', 'err'); return; }
+  if (!fuel) { showToast('Seleziona un\'alimentazione', 'err'); return; }
+  if (!km) { showToast('Inserisci i km', 'err'); return; }
+  
   showToast('Salvataggio in corso...', 'ok');
   let imageUrl = document.getElementById('imgUrl').value;
   const imgFile = document.getElementById('imgFile').files[0];
-  if (imgFile) {
-    const ext = imgFile.name.split('.').pop();
-    const filename = `${title.toLowerCase().replace(/\s+/g,'-')}-${Date.now()}.${ext}`;
-    imageUrl = await uploadImage(imgFile, filename);
-  }
-  const car = {
-    title, price: document.getElementById('f_price').value,
-    year: parseInt(document.getElementById('f_year').value),
-    km: document.getElementById('f_km').value,
-    fuel: document.getElementById('f_fuel').value,
-    image: imageUrl, badge: document.getElementById('f_badge').value,
-    excerpt: document.getElementById('f_excerpt').value,
-    featured: document.getElementById('f_featured').checked,
-    date: editingIndex !== null ? carsData[editingIndex].date : new Date().toISOString()
-  };
-  if (editingIndex !== null) carsData[editingIndex] = car;
-  else carsData.unshift(car);
+  
   try {
+    if (imgFile) {
+      const ext = imgFile.name.split('.').pop();
+      const filename = `${title.toLowerCase().replace(/\s+/g,'-')}-${Date.now()}.${ext}`;
+      imageUrl = await uploadImage(imgFile, filename);
+    }
+    
+    const car = {
+      title, price: parseFloat(price),
+      year: parseInt(year),
+      km, fuel, image: imageUrl, 
+      badge: document.getElementById('f_badge').value,
+      excerpt: document.getElementById('f_excerpt').value,
+      featured: document.getElementById('f_featured').checked,
+      date: editingIndex !== null ? carsData[editingIndex].date : new Date().toISOString()
+    };
+    
+    if (editingIndex !== null) carsData[editingIndex] = car;
+    else carsData.unshift(car);
+    
     await saveData('cars');
     closeModal(); renderTab(); showToast('Auto salvata ✓', 'ok');
-  } catch(e) { showToast('Errore nel salvataggio', 'err'); }
+  } catch(e) { 
+    showToast('Errore nel salvataggio: ' + e.message, 'err'); 
+    console.error('Save car error:', e);
+  }
 }
 
 async function saveNews() {
   const title = document.getElementById('f_title').value.trim();
+  const category = document.getElementById('f_category').value.trim();
+  const excerpt = document.getElementById('f_excerpt').value.trim();
+  const body = document.getElementById('f_body').value.trim();
+  const date = document.getElementById('f_date').value;
+  
+  // Validazione
   if (!title) { showToast('Il titolo è obbligatorio', 'err'); return; }
+  if (!category) { showToast('La categoria è obbligatoria', 'err'); return; }
+  if (!excerpt) { showToast('L\'anteprima è obbligatoria', 'err'); return; }
+  if (!body) { showToast('Il contenuto è obbligatorio', 'err'); return; }
+  if (!date) { showToast('La data è obbligatoria', 'err'); return; }
+  
   showToast('Salvataggio in corso...', 'ok');
   let imageUrl = document.getElementById('imgUrl').value;
   const imgFile = document.getElementById('imgFile').files[0];
-  if (imgFile) {
-    const ext = imgFile.name.split('.').pop();
-    const filename = `${title.toLowerCase().replace(/\s+/g,'-')}-${Date.now()}.${ext}`;
-    imageUrl = await uploadImage(imgFile, filename);
-  }
-  const article = {
-    title, category: document.getElementById('f_category').value,
-    image: imageUrl, excerpt: document.getElementById('f_excerpt').value,
-    body: document.getElementById('f_body').value,
-    date: editingIndex !== null ? newsData[editingIndex].date : new Date().toISOString()
-  };
-  if (editingIndex !== null) newsData[editingIndex] = article;
-  else newsData.unshift(article);
+  
   try {
+    if (imgFile) {
+      const ext = imgFile.name.split('.').pop();
+      const filename = `${title.toLowerCase().replace(/\s+/g,'-')}-${Date.now()}.${ext}`;
+      imageUrl = await uploadImage(imgFile, filename);
+    }
+    
+    const article = {
+      title, category, image: imageUrl, excerpt, body,
+      date: new Date(date + 'T00:00:00Z').toISOString()
+    };
+    
+    if (editingIndex !== null) newsData[editingIndex] = article;
+    else newsData.unshift(article);
+    
     await saveData('news');
     closeModal(); renderTab(); showToast('Articolo salvato ✓', 'ok');
-  } catch(e) { showToast('Errore nel salvataggio', 'err'); }
+  } catch(e) { 
+    showToast('Errore nel salvataggio: ' + e.message, 'err');
+    console.error('Save news error:', e);
+  }
 }
 
 async function deleteCar(i) {
   if (!confirm(`Eliminare "${carsData[i].title}"?`)) return;
   carsData.splice(i, 1);
   try { await saveData('cars'); renderTab(); showToast('Auto eliminata', 'ok'); }
-  catch(e) { showToast('Errore', 'err'); }
+  catch(e) { showToast('Errore: ' + e.message, 'err'); console.error(e); }
 }
 
 async function deleteNews(i) {
   if (!confirm(`Eliminare "${newsData[i].title}"?`)) return;
   newsData.splice(i, 1);
   try { await saveData('news'); renderTab(); showToast('Articolo eliminato', 'ok'); }
-  catch(e) { showToast('Errore', 'err'); }
+  catch(e) { showToast('Errore: ' + e.message, 'err'); console.error(e); }
 }
 
 // ─── TOAST ───────────────────────────────────────────────
@@ -514,25 +570,32 @@ async function init() {
 
   if (!token) return;
 
-  // Carica utente
-  const user = await fetch('https://api.github.com/user', {
-    headers: { Authorization: `token ${token}` }
-  }).then(r => r.json());
+  try {
+    // Carica utente
+    const user = await fetch('https://api.github.com/user', {
+      headers: { Authorization: `token ${token}` }
+    }).then(r => r.json());
 
-  if (user.message === 'Bad credentials') {
-    sessionStorage.removeItem('gh_token');
-    return;
+    if (user.message === 'Bad credentials') {
+      sessionStorage.removeItem('gh_token');
+      showToast('Token scaduto, effettua il login di nuovo', 'err');
+      return;
+    }
+
+    document.getElementById('userAvatar').src = user.avatar_url;
+    document.getElementById('userName').textContent = user.login;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+
+    await loadData();
+    renderTab();
+  } catch(e) {
+    showToast('Errore durante l\'inizializzazione: ' + e.message, 'err');
+    console.error('Init error:', e);
   }
-
-  document.getElementById('userAvatar').src = user.avatar_url;
-  document.getElementById('userName').textContent = user.login;
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-
-  await loadData();
-  renderTab();
 }
 
+// Avvia l'app
 init();
 </script>
 </body>
