@@ -1,74 +1,15 @@
-import { Router } from 'itty-router';
+name = "exaauto-worker"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
 
-const router = Router();
+[env.production]
+name = "exaauto-worker-prod"
 
-// Endpoint per scambiare il code OAuth con un token GitHub
-router.post('/exchange-token', async (request) => {
-  try {
-    const { code } = await request.json();
+[env.production.vars]
+GITHUB_CLIENT_ID = "Ov23liS8zF5MXwZAd0nf"
 
-    if (!code) {
-      return new Response(
-        JSON.stringify({ error: 'Code mancante' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
+[[env.production.vars_text]]
+env = "production"
 
-    // Scambia il code con il token (sicuro perché client_secret rimane in Cloudflare)
-    const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({
-        client_id: GITHUB_CLIENT_ID,
-        client_secret: GITHUB_CLIENT_SECRET,
-        code,
-      }),
-    });
-
-    const tokenData = await tokenResponse.json();
-
-    if (tokenData.error) {
-      return new Response(
-        JSON.stringify({ error: tokenData.error_description || tokenData.error }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Ritorna il token al client
-    return new Response(
-      JSON.stringify({ access_token: tokenData.access_token }),
-      { 
-        status: 200, 
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        } 
-      }
-    );
-  } catch (error) {
-    console.error('OAuth exchange error:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
-  }
-});
-
-// Gestisci CORS pre-flight
-router.options('*', (request) => {
-  return new Response(null, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
-});
-
-// 404
-router.all('*', () => new Response('Not found', { status: 404 }));
-
-export default router;
+[build.upload]
+format = "modules"
