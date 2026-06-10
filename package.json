@@ -1,0 +1,12 @@
+{
+  "name": "exaauto-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker per OAuth GitHub token exchange",
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.45.0"
+  }
+}
