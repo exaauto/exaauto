@@ -168,7 +168,7 @@ function logout() {
 async function ghGet(path) {
   const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`, {
     headers: { 
-      'Authorization': 'token ' + 'ghp_HJqwZ7K1mZzZ7K1mZzZ7K1mZzZ7K1mZzZ',
+      'Authorization': 'token ' + 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,
       'Accept': 'application/vnd.github.v3+json' 
     }
   });
@@ -187,7 +187,7 @@ async function ghPut(path, content, sha) {
   const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
     method: 'PUT',
     headers: { 
-      'Authorization': 'token ' + 'ghp_HJqwZ7K1mZzZ7K1mZzZ7K1mZzZ7K1mZzZ',
+      'Authorization': 'token ' + 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,
       'Accept': 'application/vnd.github.v3+json', 
       'Content-Type': 'application/json' 
     },
