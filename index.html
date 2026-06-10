@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExaAuto - Auto Usate di Qualità</title>
+  <style>
+    :root {
+      --red: #e01e37;
+      --bg: #0a0a0b;
+      --bg2: #111113;
+      --surface: #1c1c1f;
+      --border: rgba(255,255,255,0.08);
+      --text: #f0f0f2;
+      --muted: #7a7a85;
+      --font: 'DM Sans', sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+    }
+    header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .logo span {
+      color: var(--red);
+    }
+    .admin-btn {
+      padding: 10px 20px;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    .admin-btn:hover {
+      background: #b5162c;
+    }
+    main {
+      padding: 60px 5%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    h1 span {
+      color: var(--red);
+    }
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 1.2rem;
+      margin-bottom: 60px;
+    }
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+    .filter-section {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .filter-section select, .filter-section input {
+      padding: 10px 15px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: var(--font);
+    }
+    .filter-section button {
+      padding: 10px 20px;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    .filter-section button:hover {
+      background: #b5162c;
+    }
+    .filter-section .btn-reset {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(224, 30, 55, 0.2);
+    }
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: var(--bg2);
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .card-badges {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-featured {
+      background: rgba(224, 30, 55, 0.2);
+      color: var(--red);
+    }
+    .badge-custom {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--muted);
+    }
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .card-meta {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 15px;
+    }
+    .card-price {
+      font-size: 1.8rem;
+      color: var(--red);
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+    .card-desc {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+    .card-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .card-btn:hover {
+      background: #b5162c;
+    }
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 40px 5%;
+      text-align: center;
+      color: var(--muted);
+      margin-top: 60px;
+    }
+    .news-section {
+      margin-top: 80px;
+      padding-top: 60px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">EXA<span>AUTO</span></div>
+  <a href="/admin/" class="admin-btn">🔐 Admin Area</a>
+</header>
+
+<main>
+  <h1>Auto Usate di <span>Qualità</span></h1>
+  <p class="subtitle">Scopri le migliori auto usate verificate e affidabili</p>
+
+  <div class="filter-section">
+    <select id="fuelFilter">
+      <option value="">Tutti i carburanti</option>
+      <option value="Benzina">Benzina</option>
+      <option value="Diesel">Diesel</option>
+      <option value="Ibrido">Ibrido</option>
+      <option value="Elettrico">Elettrico</option>
+      <option value="Gpl">GPL</option>
+    </select>
+    <input type="number" id="priceFilter" placeholder="Prezzo massimo (€)" min="0">
+    <button onclick="applyFilters()">Filtra</button>
+    <button class="btn-reset" onclick="resetFilters()">Reset</button>
+  </div>
+
+  <div id="carsContainer" class="grid">
+    <div class="loading">Caricamento auto...</div>
+  </div>
+
+  <div class="news-section">
+    <h2>📰 Novità dal Blog</h2>
+    <div id="newsContainer" class="grid">
+      <div class="loading">Caricamento articoli...</div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2026 ExaAuto - Tutti i diritti riservati</p>
+</footer>
+
+<script>
+let allCars = [];
+let allNews = [];
+
+async function loadData() {
+  try {
+    const carsRes = await fetch('https://raw.githubusercontent.com/exaauto/exaauto/main/data/cars.json');
+    allCars = await carsRes.json();
+
+    const newsRes = await fetch('https://raw.githubusercontent.com/exaauto/exaauto/main/data/news.json');
+    allNews = await newsRes.json();
+
+    renderCars(allCars);
+    renderNews(allNews);
+  } catch (e) {
+    console.error('Errore:', e);
+    document.getElementById('carsContainer').innerHTML = '<div class="empty">Errore nel caricamento dei dati</div>';
+  }
+}
+
+function renderCars(cars) {
+  const container = document.getElementById('carsContainer');
+  if (!cars.length) {
+    container.innerHTML = '<div class="empty">Nessuna auto disponibile</div>';
+    return;
+  }
+
+  container.innerHTML = cars.map(car => `
+    <div class="card">
+      <img src="${car.image}" alt="${car.title}" onerror="this.src='https://via.placeholder.com/350x200'">
+      <div class="card-body">
+        <div class="card-badges">
+          ${car.featured ? '<span class="badge badge-featured">In evidenza</span>' : ''}
+          ${car.badge ? `<span class="badge badge-custom">${car.badge}</span>` : ''}
+        </div>
+        <div class="card-title">${car.title}</div>
+        <div class="card-meta">${car.year} · ${car.km} km · ${car.fuel}</div>
+        <div class="card-price">€ ${Number(car.price).toLocaleString('it-IT')}</div>
+        <div class="card-desc">${car.excerpt}</div>
+        <button class="card-btn" onclick="alert('Contatta il venditore per più informazioni!')">Contatta</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderNews(news) {
+  const container = document.getElementById('newsContainer');
+  if (!news.length) {
+    container.innerHTML = '<div class="empty">Nessun articolo disponibile</div>';
+    return;
+  }
+
+  container.innerHTML = news.map(article => `
+    <div class="card">
+      <img src="${article.image}" alt="${article.title}" onerror="this.src='https://via.placeholder.com/350x200'">
+      <div class="card-body">
+        <span class="badge badge-featured" style="margin-bottom: 10px; display: inline-block;">${article.category}</span>
+        <div class="card-title">${article.title}</div>
+        <div class="card-meta">${new Date(article.date).toLocaleDateString('it-IT')}</div>
+        <div class="card-desc">${article.excerpt}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function applyFilters() {
+  const fuel = document.getElementById('fuelFilter').value;
+  const maxPrice = parseInt(document.getElementById('priceFilter').value) || Infinity;
+
+  const filtered = allCars.filter(car => {
+    const carPrice = parseInt(car.price);
+    return (!fuel || car.fuel === fuel) && carPrice <= maxPrice;
+  });
+
+  renderCars(filtered);
+}
+
+function resetFilters() {
+  document.getElementById('fuelFilter').value = '';
+  document.getElementById('priceFilter').value = '';
+  renderCars(allCars);
+}
+
+loadData();
+</script>
+
+</body>
+</html>
