@@ -1,17 +1,371 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ExaAuto - Admin disabilitato</title>
-  <style>body{font-family:Inter,system-ui,Segoe UI,Arial;color:#111;background:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0} .card{max-width:720px;padding:28px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.08)} h1{margin:0 0 10px 0;color:#c62828} p{margin:6px 0;color:#333}</style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ExaAuto — Pannello Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --red:#e01e37; --bg:#0a0a0b; --surface:#151517; --surface2:#1e1e21;
+    --border:rgba(255,255,255,0.08); --text:#f0f0f2; --muted:#8a8a92;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+  .wrap{max-width:900px;margin:0 auto;padding:40px 20px;}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;margin-bottom:8px;}
+  .logo span{color:var(--red);}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:32px;}
+
+  /* Login */
+  #loginBox{max-width:380px;margin:80px auto;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:36px;text-align:center;}
+  #loginBox input{width:100%;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:15px;margin:16px 0;}
+  #loginBox button{width:100%;padding:12px;background:var(--red);color:#fff;border:none;border-radius:6px;font-size:15px;font-weight:500;cursor:pointer;}
+  #loginBox button:hover{background:#b5162c;}
+  #loginError{color:var(--red);font-size:13px;margin-top:10px;min-height:18px;}
+
+  /* App */
+  #app{display:none;}
+  .tabs{display:flex;gap:10px;margin-bottom:28px;border-bottom:1px solid var(--border);}
+  .tab{padding:12px 18px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;font-size:14px;font-weight:500;}
+  .tab.active{color:var(--text);border-bottom-color:var(--red);}
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .btn{padding:10px 18px;border-radius:6px;border:none;font-size:14px;font-weight:500;cursor:pointer;}
+  .btn-primary{background:var(--red);color:#fff;}
+  .btn-primary:hover{background:#b5162c;}
+  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+  .btn-secondary:hover{background:#2a2a2e;}
+  .btn-danger{background:transparent;color:var(--red);border:1px solid rgba(224,30,55,0.4);}
+  .btn-danger:hover{background:rgba(224,30,55,0.1);}
+  .btn-sm{padding:6px 12px;font-size:12px;}
+
+  .item-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:16px;}
+  .item-info h3{font-size:16px;margin-bottom:4px;}
+  .item-info p{font-size:13px;color:var(--muted);}
+  .item-actions{display:flex;gap:8px;flex-shrink:0;}
+
+  /* Form modal */
+  #formOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:50;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 20px;}
+  #formModal{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:32px;max-width:600px;width:100%;}
+  #formModal h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;margin-bottom:24px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12px;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;}
+  .field input, .field select, .field textarea{width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-family:inherit;}
+  .field textarea{resize:vertical;min-height:80px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .checkbox-field{display:flex;align-items:center;gap:8px;}
+  .checkbox-field input{width:auto;}
+  .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;}
+
+  .status{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 20px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,0.4);z-index:100;display:none;}
+  .status.ok{border-color:rgba(60,180,100,0.4);}
+  .status.error{border-color:rgba(224,30,55,0.5);color:#ff8a95;}
+
+  .empty{text-align:center;color:var(--muted);padding:40px 0;font-size:14px;}
+</style>
 </head>
 <body>
-  <div class="card">
-    <h1>Admin disabilitato</h1>
-    <p>Questa interfaccia di amministrazione è stata disabilitata per motivi di sicurezza.</p>
-    <p>Per gestire annunci e contenuti, utilizza l'interfaccia Netlify CMS che ho preparato: apri la pagina <code>/admin</code> sul sito Netlify che hai creato per il pannello di amministrazione (es. https://&lt;tuo-sito-netlify&gt;.netlify.app/admin).</p>
-    <p>Se non hai ancora collegato il sito Netlify al repository o abilitato Identity + Git Gateway, ti posso guidare passo passo o completare io l'operazione — dimmi come preferisci procedere.</p>
+
+<!-- LOGIN -->
+<div id="loginBox">
+  <div class="logo">EXA<span>AUTO</span></div>
+  <p class="sub" style="margin-bottom:0">Pannello Admin</p>
+  <input type="password" id="pwInput" placeholder="Password" />
+  <button id="loginBtn">Accedi</button>
+  <div id="loginError"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="wrap">
+    <div class="logo">EXA<span>AUTO</span></div>
+    <p class="sub">Gestisci annunci auto e novità del sito</p>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="cars">Annunci Auto</div>
+      <div class="tab" data-tab="news">Novità</div>
+    </div>
+
+    <div class="panel active" id="panel-cars">
+      <div class="toolbar">
+        <span style="color:var(--muted);font-size:13px;" id="carsCount"></span>
+        <button class="btn btn-primary" id="addCarBtn">+ Nuova auto</button>
+      </div>
+      <div id="carsList"></div>
+    </div>
+
+    <div class="panel" id="panel-news">
+      <div class="toolbar">
+        <span style="color:var(--muted);font-size:13px;" id="newsCount"></span>
+        <button class="btn btn-primary" id="addNewsBtn">+ Nuova novità</button>
+      </div>
+      <div id="newsList"></div>
+    </div>
   </div>
+</div>
+
+<!-- FORM MODAL -->
+<div id="formOverlay">
+  <div id="formModal"></div>
+</div>
+
+<div class="status" id="status"></div>
+
+<script>
+const API = '/api/cms';
+let PASSWORD = '';
+let state = { cars: { data: [], sha: null }, news: { data: [], sha: null } };
+let editing = { file: null, index: null };
+
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+function showStatus(msg, type='ok'){
+  const el = $('#status');
+  el.textContent = msg;
+  el.className = 'status ' + type;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3500);
+}
+
+async function callApi(action, file, data, sha){
+  const res = await fetch(API, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ password: PASSWORD, action, file, data, sha })
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Errore sconosciuto');
+  return json;
+}
+
+// ---- LOGIN ----
+$('#loginBtn').addEventListener('click', doLogin);
+$('#pwInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') doLogin(); });
+
+async function doLogin(){
+  const pw = $('#pwInput').value.trim();
+  if(!pw){ $('#loginError').textContent = 'Inserisci la password'; return; }
+  PASSWORD = pw;
+  $('#loginBtn').textContent = 'Verifica...';
+  try {
+    const r1 = await callApi('get', 'cars');
+    const r2 = await callApi('get', 'news');
+    state.cars = { data: r1.content, sha: r1.sha };
+    state.news = { data: r2.content, sha: r2.sha };
+    sessionStorage.setItem('exaauto_pw', PASSWORD);
+    $('#loginBox').style.display = 'none';
+    $('#app').style.display = 'block';
+    renderCars();
+    renderNews();
+  } catch(e) {
+    $('#loginError').textContent = e.message === 'Password errata' ? 'Password errata' : ('Errore: ' + e.message);
+    $('#loginBtn').textContent = 'Accedi';
+  }
+}
+
+// Auto-login if password saved this session
+(async function tryAutoLogin(){
+  const saved = sessionStorage.getItem('exaauto_pw');
+  if(saved){
+    $('#pwInput').value = saved;
+    await doLogin();
+  }
+})();
+
+// ---- TABS ----
+$$('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    $$('.tab').forEach(t => t.classList.remove('active'));
+    $$('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    $('#panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ---- RENDER LISTS ----
+function renderCars(){
+  const list = $('#carsList');
+  const cars = state.cars.data;
+  $('#carsCount').textContent = cars.length + ' auto totali';
+  if(cars.length === 0){ list.innerHTML = '<div class="empty">Nessuna auto ancora. Aggiungine una!</div>'; return; }
+  list.innerHTML = cars.map((c, i) => `
+    <div class="item-card">
+      <div class="item-info">
+        <h3>${escapeHtml(c.title)} ${c.featured ? '★' : ''}</h3>
+        <p>€ ${escapeHtml(String(c.price))} · ${c.year} · ${escapeHtml(c.km)} km · ${escapeHtml(c.fuel)}</p>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openCarForm(${i})">Modifica</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('cars', ${i})">Elimina</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderNews(){
+  const list = $('#newsList');
+  const news = state.news.data;
+  $('#newsCount').textContent = news.length + ' articoli totali';
+  if(news.length === 0){ list.innerHTML = '<div class="empty">Nessun articolo ancora. Aggiungine uno!</div>'; return; }
+  list.innerHTML = news.map((n, i) => `
+    <div class="item-card">
+      <div class="item-info">
+        <h3>${escapeHtml(n.title)}</h3>
+        <p>${escapeHtml(n.category)}</p>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openNewsForm(${i})">Modifica</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('news', ${i})">Elimina</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str ?? '';
+  return d.innerHTML;
+}
+
+// ---- ADD BUTTONS ----
+$('#addCarBtn').addEventListener('click', () => openCarForm(null));
+$('#addNewsBtn').addEventListener('click', () => openNewsForm(null));
+
+// ---- CAR FORM ----
+function openCarForm(index){
+  editing = { file: 'cars', index };
+  const car = index !== null ? state.cars.data[index] : {
+    title:'', price:'', year:new Date().getFullYear(), km:'', fuel:'Benzina',
+    image:'', badge:'', excerpt:'', featured:false, date:new Date().toISOString()
+  };
+
+  $('#formModal').innerHTML = `
+    <h2>${index !== null ? 'Modifica auto' : 'Nuova auto'}</h2>
+    <div class="field"><label>Titolo</label><input id="f_title" value="${escapeAttr(car.title)}" placeholder="es. BMW Serie 3 2022"></div>
+    <div class="field-row">
+      <div class="field"><label>Prezzo (€)</label><input id="f_price" value="${escapeAttr(car.price)}" placeholder="35000"></div>
+      <div class="field"><label>Anno</label><input id="f_year" type="number" value="${car.year}"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Chilometri</label><input id="f_km" value="${escapeAttr(car.km)}" placeholder="15000"></div>
+      <div class="field"><label>Alimentazione</label>
+        <select id="f_fuel">
+          ${['Benzina','Diesel','Ibrido','Elettrico','Gpl'].map(f => `<option ${car.fuel===f?'selected':''}>${f}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>URL Immagine</label><input id="f_image" value="${escapeAttr(car.image)}" placeholder="https://..."></div>
+    <div class="field"><label>Badge (opzionale)</label><input id="f_badge" value="${escapeAttr(car.badge)}" placeholder="es. In Stock, Ribassato"></div>
+    <div class="field"><label>Descrizione breve</label><textarea id="f_excerpt">${escapeHtml(car.excerpt)}</textarea></div>
+    <div class="field checkbox-field"><input type="checkbox" id="f_featured" ${car.featured?'checked':''}><label style="margin:0">In evidenza</label></div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="closeForm()">Annulla</button>
+      <button class="btn btn-primary" onclick="saveCar()">Salva</button>
+    </div>
+  `;
+  $('#formOverlay').style.display = 'flex';
+}
+
+async function saveCar(){
+  const car = {
+    title: $('#f_title').value.trim(),
+    price: $('#f_price').value.trim(),
+    year: parseInt($('#f_year').value) || new Date().getFullYear(),
+    km: $('#f_km').value.trim(),
+    fuel: $('#f_fuel').value,
+    image: $('#f_image').value.trim(),
+    badge: $('#f_badge').value.trim(),
+    excerpt: $('#f_excerpt').value.trim(),
+    featured: $('#f_featured').checked,
+    date: new Date().toISOString()
+  };
+  if(!car.title){ alert('Il titolo è obbligatorio'); return; }
+
+  if(editing.index !== null) state.cars.data[editing.index] = { ...state.cars.data[editing.index], ...car };
+  else state.cars.data.unshift(car);
+
+  await persist('cars');
+  closeForm();
+  renderCars();
+}
+
+// ---- NEWS FORM ----
+function openNewsForm(index){
+  editing = { file: 'news', index };
+  const n = index !== null ? state.news.data[index] : {
+    title:'', category:'', image:'', excerpt:'', body:'', date:new Date().toISOString()
+  };
+
+  $('#formModal').innerHTML = `
+    <h2>${index !== null ? 'Modifica novità' : 'Nuova novità'}</h2>
+    <div class="field"><label>Titolo</label><input id="f_ntitle" value="${escapeAttr(n.title)}" placeholder="es. Come scegliere l'auto usata giusta"></div>
+    <div class="field"><label>Categoria</label><input id="f_ncategory" value="${escapeAttr(n.category)}" placeholder="es. Consigli, Mercato, Manutenzione"></div>
+    <div class="field"><label>URL Immagine</label><input id="f_nimage" value="${escapeAttr(n.image)}" placeholder="https://..."></div>
+    <div class="field"><label>Anteprima</label><textarea id="f_nexcerpt">${escapeHtml(n.excerpt)}</textarea></div>
+    <div class="field"><label>Contenuto (markdown)</label><textarea id="f_nbody" style="min-height:180px;">${escapeHtml(n.body)}</textarea></div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="closeForm()">Annulla</button>
+      <button class="btn btn-primary" onclick="saveNews()">Salva</button>
+    </div>
+  `;
+  $('#formOverlay').style.display = 'flex';
+}
+
+async function saveNews(){
+  const n = {
+    title: $('#f_ntitle').value.trim(),
+    category: $('#f_ncategory').value.trim(),
+    image: $('#f_nimage').value.trim(),
+    excerpt: $('#f_nexcerpt').value.trim(),
+    body: $('#f_nbody').value.trim(),
+    date: new Date().toISOString()
+  };
+  if(!n.title){ alert('Il titolo è obbligatorio'); return; }
+
+  if(editing.index !== null) state.news.data[editing.index] = { ...state.news.data[editing.index], ...n };
+  else state.news.data.unshift(n);
+
+  await persist('news');
+  closeForm();
+  renderNews();
+}
+
+// ---- DELETE ----
+async function deleteItem(file, index){
+  if(!confirm('Sei sicuro di voler eliminare questo elemento?')) return;
+  state[file].data.splice(index, 1);
+  await persist(file);
+  if(file === 'cars') renderCars(); else renderNews();
+}
+
+// ---- PERSIST TO GITHUB ----
+async function persist(file){
+  try {
+    const result = await callApi('save', file, state[file].data, state[file].sha);
+    state[file].sha = result.sha;
+    showStatus('Salvato con successo ✓', 'ok');
+  } catch(e) {
+    showStatus('Errore nel salvataggio: ' + e.message, 'error');
+    throw e;
+  }
+}
+
+function closeForm(){
+  $('#formOverlay').style.display = 'none';
+}
+
+function escapeAttr(str){
+  return String(str ?? '').replace(/"/g, '&quot;');
+}
+
+// Close modal on background click
+$('#formOverlay').addEventListener('click', (e) => {
+  if(e.target.id === 'formOverlay') closeForm();
+});
+</script>
 </body>
 </html>
