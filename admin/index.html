@@ -1,11 +1,76 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>ExaAuto CMS</title>
-  </head>
-  <body>
-    <!-- Netlify CMS -->
-    <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
-  </body>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ExaAuto CMS</title>
+  <style>
+    body{font-family:Inter,system-ui,Segoe UI,Arial;margin:0;background:#fafafa;color:#111}
+    .center{max-width:980px;margin:36px auto;padding:24px}
+    .card{background:#fff;border-radius:10px;padding:28px;box-shadow:0 6px 22px rgba(0,0,0,.06)}
+    .actions{display:flex;gap:12px;margin-top:18px}
+    .btn{padding:10px 16px;border-radius:6px;border:1px solid rgba(0,0,0,.08);cursor:pointer;background:#fff}
+    .btn.primary{background:#0b61ff;color:#fff;border:none}
+  </style>
+</head>
+<body>
+  <div class="center">
+    <div class="card">
+      <h1>ExaAuto Admin</h1>
+      <p>Stai accedendo al pannello di amministrazione. Se non hai ancora un account, usa "Sign up" per crearne uno (riceverai una mail di conferma).</p>
+
+      <div class="actions">
+        <button id="signupBtn" class="btn primary">Sign up (email)</button>
+        <button id="loginBtn" class="btn">Log in (email)</button>
+        <button id="githubBtn" class="btn">Log in with GitHub</button>
+      </div>
+
+      <div style="margin-top:18px;color:#666">Se non ricevi l'email di conferma, controlla la cartella spam o chiedi all'amministratore Netlify di inviarti un invito.</div>
+    </div>
+  </div>
+
+  <!-- Netlify Identity widget -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <!-- Netlify CMS -->
+  <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
+
+  <script>
+    // Initialize identity widget if available
+    (function(){
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.init();
+
+        // If user is already logged in, reload to show the CMS
+        netlifyIdentity.on('login', function() { window.location.reload(); });
+        netlifyIdentity.on('logout', function() { window.location.reload(); });
+      }
+
+      document.getElementById('signupBtn').addEventListener('click', function(){
+        if (!window.netlifyIdentity) { alert('Netlify Identity non disponibile'); return; }
+        netlifyIdentity.open('signup');
+      });
+
+      document.getElementById('loginBtn').addEventListener('click', function(){
+        if (!window.netlifyIdentity) { alert('Netlify Identity non disponibile'); return; }
+        netlifyIdentity.open('login');
+      });
+
+      document.getElementById('githubBtn').addEventListener('click', function(){
+        if (!window.netlifyIdentity) { alert('Netlify Identity non disponibile'); return; }
+        // Trigger GitHub OAuth flow
+        netlifyIdentity.open('login');
+        // The provider choice will be shown in the widget if GitHub provider is enabled
+      });
+
+      // If already authenticated by Netlify Identity, show CMS main UI by loading netlify-cms-app
+      // netlify-cms will show automatically when user is authenticated by the identity widget.
+      // However some browsers may cache pages — force reload to pick identity state.
+      if (window.netlifyIdentity && netlifyIdentity.currentUser()) {
+        // redirect to the default Netlify CMS entry which expects /admin to load the CMS
+        // We reload the page to let netlify-cms detect the logged in user and render the UI
+        setTimeout(function(){ window.location.reload(); }, 300);
+      }
+    })();
+  </script>
+</body>
 </html>
