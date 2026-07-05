@@ -206,7 +206,7 @@
             const grid = document.getElementById('carsGrid');
             if (!grid) return;
             // Carica direttamente dal file di indice JSON compatibile con Cloudflare
-            const cars = await loadCMSItems('data/cars.json');
+            const cars = await loadCMSItems('data/cars.json?t=' + Date.now());
             
             if(cars.length > 0) {
                 grid.innerHTML = cars.map(car => `
@@ -237,7 +237,7 @@
             const grid = document.getElementById('newsGrid');
             if (!grid) return;
             // Carica direttamente dal file di indice JSON compatibile con Cloudflare
-            const news = await loadCMSItems('data/news.json');
+            const news = await loadCMSItems('data/news.json?t=' + Date.now());
             
             if(news.length > 0) {
                 const top3 = news.slice(0, 3);
