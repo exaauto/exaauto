@@ -21,8 +21,8 @@ const CORS_HEADERS = {
 };
 
 const FILES = {
-  cars: 'data/cars.json',
-  news: 'data/news.json',
+  cars: 'exaauto-cms/data/cars.json',
+  news: 'exaauto-cms/data/news.json',
 };
 
 const REPO = 'exaauto/exaauto';
