@@ -18,16 +18,39 @@ collections:
             name: "items"
             widget: list
             fields:
-              - { label: "Titolo", name: "title", widget: "string" }
-              - { label: "Prezzo", name: "price", widget: "number" }
-              - { label: "Anno", name: "year", widget: "number" }
-              - { label: "Km", name: "km", widget: "string" }
-              - { label: "Alimentazione", name: "fuel", widget: "select", options: ["Benzina", "Diesel", "Ibrido", "Elettrico", "Gpl"] }
-              - { label: "Immagine", name: "image", widget: "image" }
-              - { label: "Badge", name: "badge", widget: "string", required: false }
-              - { label: "Anteprima", name: "excerpt", widget: "text" }
-              - { label: "In evidenza", name: "featured", widget: "boolean", default: false }
-              - { label: "Data", name: "date", widget: "datetime" }
+              - label: "Titolo"
+                name: "title"
+                widget: "string"
+              - label: "Prezzo"
+                name: "price"
+                widget: "number"
+              - label: "Anno"
+                name: "year"
+                widget: "number"
+              - label: "Km"
+                name: "km"
+                widget: "string"
+              - label: "Alimentazione"
+                name: "fuel"
+                widget: "select"
+                options: ["Benzina", "Diesel", "Ibrido", "Elettrico", "Gpl"]
+              - label: "Immagine"
+                name: "image"
+                widget: "image"
+              - label: "Badge"
+                name: "badge"
+                widget: "string"
+                required: false
+              - label: "Anteprima"
+                name: "excerpt"
+                widget: "text"
+              - label: "In evidenza"
+                name: "featured"
+                widget: "boolean"
+                default: false
+              - label: "Data"
+                name: "date"
+                widget: "datetime"
 
   - name: "news"
     label: "Novità"
@@ -41,9 +64,21 @@ collections:
             name: "items"
             widget: list
             fields:
-              - { label: "Titolo", name: "title", widget: "string" }
-              - { label: "Categoria", name: "category", widget: "string" }
-              - { label: "Immagine", name: "image", widget: "image" }
-              - { label: "Anteprima", name: "excerpt", widget: "text" }
-              - { label: "Contenuto", name: "body", widget: "markdown" }
-              - { label: "Data", name: "date", widget: "datetime" }
+              - label: "Titolo"
+                name: "title"
+                widget: "string"
+              - label: "Categoria"
+                name: "category"
+                widget: "string"
+              - label: "Immagine"
+                name: "image"
+                widget: "image"
+              - label: "Anteprima"
+                name: "excerpt"
+                widget: "text"
+              - label: "Contenuto"
+                name: "body"
+                widget: "markdown"
+              - label: "Data"
+                name: "date"
+                widget: "datetime"
