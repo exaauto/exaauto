@@ -2,5 +2,8 @@
   X-Frame-Options: ALLOW
   Content-Security-Policy: default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; script-src 'self' https: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https:;
 
+/data/*
+  Cache-Control: no-store, no-cache, must-revalidate
+
 /*
   X-Content-Type-Options: nosniff
