@@ -1,0 +1,38 @@
+[
+  {
+    "title": "BMW Serie 3 2022",
+    "price": "35000",
+    "year": 2022,
+    "km": "15000",
+    "fuel": "Diesel",
+    "image": "https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=800&h=400&fit=crop",
+    "badge": "In Stock",
+    "excerpt": "Auto in perfette condizioni, manutenzione completa, tetto panoramico, interni in pelle.",
+    "featured": true,
+    "date": "2026-05-28T12:00:00Z"
+  },
+  {
+    "title": "Audi Q5 2021",
+    "price": "38000",
+    "year": 2021,
+    "km": "22000",
+    "fuel": "Benzina",
+    "image": "https://images.unsplash.com/photo-1606611013016-969c19d4da52?w=800&h=400&fit=crop",
+    "badge": "Ribassato",
+    "excerpt": "SUV pratico e lussuoso, navigatore, sensori parcheggio, tagliandi al day.",
+    "featured": true,
+    "date": "2026-05-27T14:30:00Z"
+  },
+  {
+    "title": "Mercedes-Benz C-Class 2020",
+    "price": "32000",
+    "year": 2020,
+    "km": "45000",
+    "fuel": "Diesel",
+    "image": "https://images.unsplash.com/photo-1618405959076-a08ab7c3ff20?w=800&h=400&fit=crop",
+    "badge": "",
+    "excerpt": "Berlina tedesca, efficiente nei consumi, climatizzatore automatico bizona.",
+    "featured": false,
+    "date": "2026-05-26T10:15:00Z"
+  }
+]
