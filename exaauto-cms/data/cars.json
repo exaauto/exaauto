@@ -2,6 +2,18 @@
   {
     "title": "BMW Serie 3 2022",
     "price": "35000",
+    "year": 2026,
+    "km": "15000",
+    "fuel": "Benzina",
+    "image": "https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=800&h=400&fit=crop",
+    "badge": "In Stock",
+    "excerpt": "",
+    "featured": false,
+    "date": "2026-07-05T20:26:55.151Z"
+  },
+  {
+    "title": "BMW Serie 3 2022",
+    "price": "35000",
     "year": 2022,
     "km": "15000",
     "fuel": "Diesel",
@@ -9,7 +21,7 @@
     "badge": "In Stock",
     "excerpt": "Auto in perfette condizioni, manutenzione completa, tetto panoramico, interni in pelle.",
     "featured": true,
-    "date": "2026-07-05T20:26:31.580Z"
+    "date": "2026-07-05T20:26:32.415Z"
   },
   {
     "title": "Audi Q5 2021",
